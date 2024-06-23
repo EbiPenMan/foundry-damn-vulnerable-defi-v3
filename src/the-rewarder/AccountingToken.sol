@@ -35,11 +35,11 @@ contract AccountingToken is ERC20Snapshot, OwnableRoles {
         return _snapshot();
     }
 
-    function _transfer(address, address, uint256) internal pure override {
+    function transfer(address, uint256) public pure override returns (bool) {
         revert NotImplemented();
     }
 
-    function _approve(address, address, uint256) internal pure override {
+    function approve(address, uint256) public pure override returns (bool) {
         revert NotImplemented();
     }
 }
