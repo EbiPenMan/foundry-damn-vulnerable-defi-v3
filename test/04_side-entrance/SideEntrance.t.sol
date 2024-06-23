@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 import "../../src/04_side-entrance/SideEntranceLenderPool.sol";
 
-contract SideEntranceTest is Test {
+contract SideEntrance is Test {
     SideEntranceLenderPool pool;
     address deployer;
     address player;
