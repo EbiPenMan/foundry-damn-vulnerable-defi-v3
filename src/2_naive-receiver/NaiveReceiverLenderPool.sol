@@ -12,7 +12,6 @@ import "./FlashLoanReceiver.sol";
  * @author Damn Vulnerable DeFi (https://damnvulnerabledefi.xyz)
  */
 contract NaiveReceiverLenderPool is ReentrancyGuard, IERC3156FlashLender {
-
     address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     uint256 private constant FIXED_FEE = 1 ether; // not the cheapest flash loan
     bytes32 private constant CALLBACK_SUCCESS = keccak256("ERC3156FlashBorrower.onFlashLoan");
@@ -29,36 +28,31 @@ contract NaiveReceiverLenderPool is ReentrancyGuard, IERC3156FlashLender {
     }
 
     function flashFee(address token, uint256) external pure returns (uint256) {
-        if (token != ETH)
+        if (token != ETH) {
             revert UnsupportedCurrency();
+        }
         return FIXED_FEE;
     }
 
-    function flashLoan(
-        IERC3156FlashBorrower receiver,
-        address token,
-        uint256 amount,
-        bytes calldata data
-    ) external returns (bool) {
-        if (token != ETH)
+    function flashLoan(IERC3156FlashBorrower receiver, address token, uint256 amount, bytes calldata data)
+        external
+        returns (bool)
+    {
+        if (token != ETH) {
             revert UnsupportedCurrency();
-        
+        }
+
         uint256 balanceBefore = address(this).balance;
 
         // Transfer ETH and handle control to receiver
         SafeTransferLib.safeTransferETH(address(receiver), amount);
-        if(receiver.onFlashLoan(
-            msg.sender,
-            ETH,
-            amount,
-            FIXED_FEE,
-            data
-        ) != CALLBACK_SUCCESS) {
+        if (receiver.onFlashLoan(msg.sender, ETH, amount, FIXED_FEE, data) != CALLBACK_SUCCESS) {
             revert CallbackFailed();
         }
 
-        if (address(this).balance < balanceBefore + FIXED_FEE)
+        if (address(this).balance < balanceBefore + FIXED_FEE) {
             revert RepayFailed();
+        }
 
         return true;
     }

@@ -43,13 +43,14 @@ This repository uses Foundry for running tests and interacting with smart contra
 ### Tips
 - To code the solutions, you may need to read [Foundry](https://book.getfoundry.sh/getting-started/installation) docs.
 - In all challenges you must use the account called player. In `forge`, that may translate to using:
-```sh
-# Sets msg.sender to the `player` address for the next call.
+```solidity
+// Sets msg.sender to the `player` address for the next call.
 vm.prank(player);
+...
 ```
 or
-```sh
-# Sets msg.sender for all subsequent calls until stopPrank is called.
+```solidity
+// Sets msg.sender for all subsequent calls until stopPrank is called.
 vm.startPrank(player);
 ...
 vm.stopPrank();
@@ -70,6 +71,24 @@ To run the all tests, use the following command:
 ```sh
 forge test
 ```
+
+### Todo List
+
+- [x] 1:	Unstoppable
+- [ ] 2:	Naive receiver
+- [ ] 3:	Truster
+- [ ] 4:	Side Entrance
+- [ ] 5:	The Rewarder
+- [ ] 6:	Selfie
+- [ ] 7:	Compromised
+- [ ] 8:	Puppet
+- [ ] 9:	Puppet V2
+- [ ] 10: Free Rider
+- [ ] 11: Backdoor
+- [ ] 12: Climber
+- [ ] 13: Wallet Mining
+- [ ] 14: Puppet V3
+- [ ] 15: ABI Smuggling
 
 ## Disclaimer
 

@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 import "solady/src/utils/FixedPointMathLib.sol";
 import "solady/src/utils/SafeTransferLib.sol";
-import { RewardToken } from "./RewardToken.sol";
-import { AccountingToken } from "./AccountingToken.sol";
+import {RewardToken} from "./RewardToken.sol";
+import {AccountingToken} from "./AccountingToken.sol";
 
 /**
  * @title TheRewarderPool
@@ -15,7 +15,7 @@ contract TheRewarderPool {
 
     // Minimum duration of each round of rewards in seconds
     uint256 private constant REWARDS_ROUND_MIN_DURATION = 5 days;
-    
+
     uint256 public constant REWARDS = 100 ether;
 
     // Token deposited into the pool by users
@@ -57,12 +57,7 @@ contract TheRewarderPool {
         accountingToken.mint(msg.sender, amount);
         distributeRewards();
 
-        SafeTransferLib.safeTransferFrom(
-            liquidityToken,
-            msg.sender,
-            address(this),
-            amount
-        );
+        SafeTransferLib.safeTransferFrom(liquidityToken, msg.sender, address(this), amount);
     }
 
     function withdraw(uint256 amount) external {

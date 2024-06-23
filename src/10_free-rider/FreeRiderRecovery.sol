@@ -25,8 +25,9 @@ contract FreeRiderRecovery is ReentrancyGuard, IERC721Receiver {
     error StillNotOwningToken(uint256 tokenId);
 
     constructor(address _beneficiary, address _nft) payable {
-        if (msg.value != PRIZE)
+        if (msg.value != PRIZE) {
             revert NotEnoughFunding();
+        }
         beneficiary = _beneficiary;
         nft = IERC721(_nft);
         IERC721(_nft).setApprovalForAll(msg.sender, true);
@@ -39,17 +40,21 @@ contract FreeRiderRecovery is ReentrancyGuard, IERC721Receiver {
         nonReentrant
         returns (bytes4)
     {
-        if (msg.sender != address(nft))
+        if (msg.sender != address(nft)) {
             revert CallerNotNFT();
+        }
 
-        if (tx.origin != beneficiary)
+        if (tx.origin != beneficiary) {
             revert OriginNotBeneficiary();
+        }
 
-        if (_tokenId > 5)
+        if (_tokenId > 5) {
             revert InvalidTokenID(_tokenId);
+        }
 
-        if (nft.ownerOf(_tokenId) != address(this))
+        if (nft.ownerOf(_tokenId) != address(this)) {
             revert StillNotOwningToken(_tokenId);
+        }
 
         if (++received == 6) {
             address recipient = abi.decode(_data, (address));

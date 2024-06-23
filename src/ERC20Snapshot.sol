@@ -38,7 +38,6 @@ import "./Counters.sol";
  * only significant for the first transfer that immediately follows a snapshot for a particular account. Subsequent
  * transfers will have normal cost until the next snapshot, and so on.
  */
-
 abstract contract ERC20Snapshot is ERC20 {
     // Inspired by Jordi Baylina's MiniMeToken to record historical balances:
     // https://github.com/Giveth/minime/blob/ea04d950eea153a04c51fa510b068b9dded390cb/contracts/MiniMeToken.sol

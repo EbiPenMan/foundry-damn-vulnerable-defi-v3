@@ -44,5 +44,7 @@ contract FlashLoanerPool is ReentrancyGuard {
         }
     }
 
-    function _isContract(address account) internal view returns (bool) { return account.code.length > 0; }
+    function _isContract(address account) internal view returns (bool) {
+        return account.code.length > 0;
+    }
 }

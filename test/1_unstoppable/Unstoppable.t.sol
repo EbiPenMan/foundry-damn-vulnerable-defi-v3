@@ -2,12 +2,12 @@
 pragma solidity ^0.8.10;
 
 import "forge-std/Test.sol";
-import "../src/DamnValuableToken.sol";
-import "../src/unstoppable/UnstoppableVault.sol";
-import "../src/unstoppable/ReceiverUnstoppable.sol";
+import "../../src/DamnValuableToken.sol";
+import "../../src/1_unstoppable/UnstoppableVault.sol";
+import "../../src/1_unstoppable/ReceiverUnstoppable.sol";
 import {ERC4626, ERC20} from "solmate/src/tokens/ERC4626.sol";
 
-contract UnstoppableTest is Test {
+contract Unstoppable is Test {
     DamnValuableToken token;
     UnstoppableVault vault;
     ReceiverUnstoppable receiverContract;

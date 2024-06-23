@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import "solmate/src/utils/FixedPointMathLib.sol";
 import "solmate/src/utils/ReentrancyGuard.sol";
-import { SafeTransferLib, ERC4626, ERC20 } from "solmate/src/tokens/ERC4626.sol";
+import {SafeTransferLib, ERC4626, ERC20} from "solmate/src/tokens/ERC4626.sol";
 import "solmate/src/auth/Owned.sol";
-import { IERC3156FlashBorrower, IERC3156FlashLender } from "@openzeppelin/contracts/interfaces/IERC3156.sol";
+import {IERC3156FlashBorrower, IERC3156FlashLender} from "@openzeppelin/contracts/interfaces/IERC3156.sol";
 
 /**
  * @title UnstoppableVault
@@ -41,8 +41,9 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
      * @inheritdoc IERC3156FlashLender
      */
     function maxFlashLoan(address _token) public view returns (uint256) {
-        if (address(asset) != _token)
+        if (address(asset) != _token) {
             return 0;
+        }
 
         return totalAssets();
     }
@@ -51,8 +52,9 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
      * @inheritdoc IERC3156FlashLender
      */
     function flashFee(address _token, uint256 _amount) public view returns (uint256 fee) {
-        if (address(asset) != _token)
+        if (address(asset) != _token) {
             revert UnsupportedCurrency();
+        }
 
         if (block.timestamp < end && _amount < maxFlashLoan(_token)) {
             return 0;
@@ -72,7 +74,8 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
      * @inheritdoc ERC4626
      */
     function totalAssets() public view override returns (uint256) {
-        assembly { // better safe than sorry
+        assembly {
+            // better safe than sorry
             if eq(sload(0), 2) {
                 mstore(0x00, 0xed3ba6a6)
                 revert(0x1c, 0x04)
@@ -84,12 +87,10 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
     /**
      * @inheritdoc IERC3156FlashLender
      */
-    function flashLoan(
-        IERC3156FlashBorrower receiver,
-        address _token,
-        uint256 amount,
-        bytes calldata data
-    ) external returns (bool) {
+    function flashLoan(IERC3156FlashBorrower receiver, address _token, uint256 amount, bytes calldata data)
+        external
+        returns (bool)
+    {
         if (amount == 0) revert InvalidAmount(0); // fail early
         if (address(asset) != _token) revert UnsupportedCurrency(); // enforce ERC3156 requirement
         uint256 balanceBefore = totalAssets();
@@ -98,8 +99,12 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
         // transfer tokens out + execute callback on receiver
         ERC20(_token).safeTransfer(address(receiver), amount);
         // callback must return magic value, otherwise assume it failed
-        if (receiver.onFlashLoan(msg.sender, address(asset), amount, fee, data) != keccak256("IERC3156FlashBorrower.onFlashLoan"))
+        if (
+            receiver.onFlashLoan(msg.sender, address(asset), amount, fee, data)
+                != keccak256("IERC3156FlashBorrower.onFlashLoan")
+        ) {
             revert CallbackFailed();
+        }
         // pull amount + fee from receiver, then pay the fee to the recipient
         ERC20(_token).safeTransferFrom(address(receiver), address(this), amount + fee);
         ERC20(_token).safeTransfer(feeRecipient, fee);
