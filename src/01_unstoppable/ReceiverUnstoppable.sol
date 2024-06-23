@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
 import "solmate/src/auth/Owned.sol";
-import {UnstoppableVault, ERC20} from "../1_unstoppable/UnstoppableVault.sol";
+import {UnstoppableVault, ERC20} from "../01_unstoppable/UnstoppableVault.sol";
 
 /**
  * @title ReceiverUnstoppable
