@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "./ERC20Snapshot.sol";
+import "./openzeppelin-contracts-v4/ERC20Snapshot.sol";
 
 /**
  * @title DamnValuableTokenSnapshot
