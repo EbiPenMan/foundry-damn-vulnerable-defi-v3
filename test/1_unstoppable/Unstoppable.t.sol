@@ -63,8 +63,8 @@ contract Unstoppable is Test {
     function testUnstoppable() public {
         // It is no longer possible to execute flash loans
         _execution();
-        vm.expectRevert();
         vm.prank(someUser);
+        vm.expectRevert();
         receiverContract.executeFlashLoan(100 * 10 ** 18);
     }
 }
