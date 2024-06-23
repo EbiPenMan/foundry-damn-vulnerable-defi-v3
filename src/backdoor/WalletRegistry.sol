@@ -65,7 +65,7 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
      * @notice Function executed when user creates a Gnosis Safe wallet via GnosisSafeProxyFactory::createProxyWithCallback
      *          setting the registry's address as the callback.
      */
-    function proxyCreated(GnosisSafeProxy proxy, address singleton, bytes calldata initializer, uint256)
+    function proxyCreated(SafeProxy proxy, address singleton, bytes calldata initializer, uint256)
         external
         override
     {
@@ -85,17 +85,17 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
         }
 
         // Ensure initial calldata was a call to `GnosisSafe::setup`
-        if (bytes4(initializer[:4]) != GnosisSafe.setup.selector) {
+        if (bytes4(initializer[:4]) != Safe.setup.selector) {
             revert InvalidInitialization();
         }
 
         // Ensure wallet initialization is the expected
-        uint256 threshold = GnosisSafe(walletAddress).getThreshold();
+        uint256 threshold = Safe(walletAddress).getThreshold();
         if (threshold != EXPECTED_THRESHOLD) {
             revert InvalidThreshold(threshold);
         }
 
-        address[] memory owners = GnosisSafe(walletAddress).getOwners();
+        address[] memory owners = Safe(walletAddress).getOwners();
         if (owners.length != EXPECTED_OWNERS_COUNT) {
             revert InvalidOwnersCount(owners.length);
         }
@@ -125,7 +125,7 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
 
     function _getFallbackManager(address payable wallet) private view returns (address) {
         return abi.decode(
-            GnosisSafe(wallet).getStorageAt(
+            Safe(wallet).getStorageAt(
                 uint256(keccak256("fallback_manager.handler.address")),
                 0x20
             ),

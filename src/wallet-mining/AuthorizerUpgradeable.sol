@@ -15,7 +15,7 @@ contract AuthorizerUpgradeable is Initializable, OwnableUpgradeable, UUPSUpgrade
     event Rely(address indexed usr, address aim);
 
     function init(address[] memory _wards, address[] memory _aims) external initializer {
-        __Ownable_init();
+        __Ownable_init(owner());
         __UUPSUpgradeable_init();
 
         for (uint256 i = 0; i < _wards.length;) {
@@ -35,10 +35,10 @@ contract AuthorizerUpgradeable is Initializable, OwnableUpgradeable, UUPSUpgrade
         return wards[usr][aim] == 1;
     }
 
-    function upgradeToAndCall(address imp, bytes memory wat) external payable override {
-        _authorizeUpgrade(imp);
-        _upgradeToAndCallUUPS(imp, wat, true);
-    }
+    // function upgradeToAndCall(address imp, bytes memory wat) external payable override {
+    //     _authorizeUpgrade(imp);
+    //     super.upgradeToAndCall(imp, wat);
+    // }
 
     function _authorizeUpgrade(address imp) internal override onlyOwner {}
 }

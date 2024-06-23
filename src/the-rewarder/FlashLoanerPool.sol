@@ -31,7 +31,7 @@ contract FlashLoanerPool is ReentrancyGuard {
             revert NotEnoughTokenBalance();
         }
 
-        if (!msg.sender.isContract()) {
+        if (!_isContract(msg.sender)) {
             revert CallerIsNotContract();
         }
 
@@ -43,4 +43,6 @@ contract FlashLoanerPool is ReentrancyGuard {
             revert FlashLoanNotPaidBack();
         }
     }
+
+    function _isContract(address account) internal view returns (bool) { return account.code.length > 0; }
 }

@@ -27,12 +27,12 @@ contract TrustfulOracle is AccessControlEnumerable {
             revert NotEnoughSources();
         for (uint256 i = 0; i < sources.length;) {
             unchecked {
-                _setupRole(TRUSTED_SOURCE_ROLE, sources[i]);
+                _grantRole(TRUSTED_SOURCE_ROLE, sources[i]);
                 ++i;
             }
         }
         if (enableInitialization)
-            _setupRole(INITIALIZER_ROLE, msg.sender);
+            _grantRole(INITIALIZER_ROLE, msg.sender);
     }
 
     // A handy utility allowing the deployer to setup initial prices (only once)

@@ -1,66 +1,79 @@
-## Foundry
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+![](cover.png)
 
-Foundry consists of:
+# Damn Vulnerable DeFi - Foundry Edition
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+**A set of challenges to learn offensive security of smart contracts in Ethereum.**
 
-## Documentation
+This repository is a Foundry-based implementation of the original [Damn Vulnerable DeFi](https://github.com/tinchoabbate/damn-vulnerable-defi/tree/v3.0.0) project. The challenges feature flash loans, price oracles, governance, NFTs, lending pools, smart contract wallets, timelocks, and more!
 
-https://book.getfoundry.sh/
+## Play
 
-## Usage
+Visit [damnvulnerabledefi.xyz](https://damnvulnerabledefi.xyz) to access the challenges.
 
-### Build
 
-```shell
-$ forge build
+## How to Use
+
+This repository uses Foundry for running tests and interacting with smart contracts. Follow the instructions below to get started:
+
+### Prerequisites
+
+- Install [Foundry](https://getfoundry.sh/).
+
+### Installation
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/EbiPenMan/damn-vulnerable-defi-foundry
+   cd damn-vulnerable-defi-foundry
+   ```
+
+2. Install dependencies:
+   ```sh
+   forge install
+   ```
+
+### How to play
+
+- Code your solution in the *.t.sol file (inside each challenge's folder in the test folder)
+- You only need to write your solution in the `_execution` method and run the test.
+- Run the challenge with `forge test --match-test test{challenge-name}`. If the test is executed successfully, you've passed!
+
+
+### Tips
+- To code the solutions, you may need to read [Foundry](https://book.getfoundry.sh/getting-started/installation) docs.
+- In all challenges you must use the account called player. In `forge`, that may translate to using:
+```sh
+# Sets msg.sender to the `player` address for the next call.
+vm.prank(player);
+```
+or
+```sh
+# Sets msg.sender for all subsequent calls until stopPrank is called.
+vm.startPrank(player);
+...
+vm.stopPrank();
+```
+- Some challenges require you to code and deploy custom smart contracts that you can use [this](src/player-contracts) folder.
+- Go [here](https://github.com/tinchoabbate/damn-vulnerable-defi/discussions/categories/support-q-a-troubleshooting) for troubleshooting, support and Q&A.
+- If you have any problem with `converted Foundry` scripts, You can create issue in this repo.
+
+
+### Running Tests
+
+To run the specefic tests, use the following command:
+```sh
+forge test --match-test testUnstoppable
 ```
 
-### Test
-
-```shell
-$ forge test
+To run the all tests, use the following command:
+```sh
+forge test
 ```
 
-### Format
+## Disclaimer
 
-```shell
-$ forge fmt
-```
+All Solidity code, practices, and patterns in this repository are **DAMN VULNERABLE** and for educational purposes only.
 
-### Gas Snapshots
+Please note that the conversion of tests from Hardhat to Foundry and the update of dependencies may contain errors.
 
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
