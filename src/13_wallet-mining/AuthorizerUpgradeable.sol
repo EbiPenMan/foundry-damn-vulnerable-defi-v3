@@ -14,8 +14,8 @@ contract AuthorizerUpgradeable is Initializable, OwnableUpgradeable, UUPSUpgrade
 
     event Rely(address indexed usr, address aim);
 
-    function init(address[] memory _wards, address[] memory _aims) external initializer {
-        __Ownable_init(owner());
+    function init(address owner ,address[] memory _wards, address[] memory _aims) external initializer {
+        __Ownable_init(owner);
         __UUPSUpgradeable_init();
 
         for (uint256 i = 0; i < _wards.length;) {

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.7.6;
+pragma solidity ^0.8.0;
 
-import "@uniswap/v3-core/contracts/interfaces/IERC20Minimal.sol";
-import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
-import "@uniswap/v3-core/contracts/libraries/TransferHelper.sol";
-import "@uniswap/v3-periphery/contracts/libraries/OracleLibrary.sol";
+import {ERC20} from "solmate/src/tokens/ERC20.sol";
+
+import "../../build-uniswap/v3/IUniswapV3Pool.sol";
+import "../../build-uniswap/v3/TransferHelper.sol";
+import "../../build-uniswap/v3/OracleLibrary.sol";
 
 /**
  * @title PuppetV3Pool
@@ -15,15 +16,15 @@ contract PuppetV3Pool {
     uint256 public constant DEPOSIT_FACTOR = 3;
     uint32 public constant TWAP_PERIOD = 10 minutes;
 
-    IERC20Minimal public immutable weth;
-    IERC20Minimal public immutable token;
+    ERC20 public immutable weth;
+    ERC20 public immutable token;
     IUniswapV3Pool public immutable uniswapV3Pool;
 
     mapping(address => uint256) public deposits;
 
     event Borrowed(address indexed borrower, uint256 depositAmount, uint256 borrowAmount);
 
-    constructor(IERC20Minimal _weth, IERC20Minimal _token, IUniswapV3Pool _uniswapV3Pool) {
+    constructor(ERC20 _weth, ERC20 _token, IUniswapV3Pool _uniswapV3Pool) {
         weth = _weth;
         token = _token;
         uniswapV3Pool = _uniswapV3Pool;

@@ -6,8 +6,8 @@ import "forge-std/Vm.sol";
 import "forge-std/StdJson.sol";
 import "../../src/DamnValuableToken.sol";
 import "../../src/08_puppet/PuppetPool.sol";
-import "../../build-uniswap-v1/IUniswapV1Exchange.sol";
-import "../../build-uniswap-v1/IUniswapV1Factory.sol";
+import "../../build-uniswap/v1/IUniswapV1Exchange.sol";
+import "../../build-uniswap/v1/IUniswapV1Factory.sol";
 
 contract PuppetChallengeTest is Test {
     address deployer;
@@ -99,7 +99,7 @@ contract PuppetChallengeTest is Test {
     function deployBytecode(string memory fileName) public returns (address contractAddress) {
         // Load the bytecode from JSON file
         string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/build-uniswap-v1/", fileName);
+        string memory path = string.concat(root, "/build-uniswap/v1/", fileName);
         string memory json = vm.readFile(path);
 
         // Parse bytecode
@@ -107,6 +107,10 @@ contract PuppetChallengeTest is Test {
 
         assembly {
             contractAddress := create(0, add(bytecode, 0x20), mload(bytecode))
+            // if iszero(extcodesize(contractAddress)) {
+            //     returndatacopy(0, 0, returndatasize())
+            //     revert(0, returndatasize())
+            // }
         }
         require(contractAddress != address(0), "Deployment failed");
     }

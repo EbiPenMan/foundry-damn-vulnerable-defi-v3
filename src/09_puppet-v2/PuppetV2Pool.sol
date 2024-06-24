@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.0;
 
-import "@uniswap/v2-periphery/contracts/libraries/UniswapV2Library.sol";
-import "@uniswap/v2-periphery/contracts/libraries/SafeMath.sol";
+import "../../build-uniswap/v2/UniswapV2Library.sol";
 
 interface IERC20 {
     function transfer(address to, uint256 amount) external returns (bool);
@@ -15,7 +14,6 @@ interface IERC20 {
  * @author Damn Vulnerable DeFi (https://damnvulnerabledefi.xyz)
  */
 contract PuppetV2Pool {
-    using SafeMath for uint256;
 
     address private _uniswapPair;
     address private _uniswapFactory;
@@ -27,7 +25,6 @@ contract PuppetV2Pool {
     event Borrowed(address indexed borrower, uint256 depositRequired, uint256 borrowAmount, uint256 timestamp);
 
     constructor(address wethAddress, address tokenAddress, address uniswapPairAddress, address uniswapFactoryAddress)
-        public
     {
         _weth = IERC20(wethAddress);
         _token = IERC20(tokenAddress);
@@ -57,13 +54,13 @@ contract PuppetV2Pool {
 
     function calculateDepositOfWETHRequired(uint256 tokenAmount) public view returns (uint256) {
         uint256 depositFactor = 3;
-        return _getOracleQuote(tokenAmount).mul(depositFactor) / (1 ether);
+        return _getOracleQuote(tokenAmount) * (depositFactor) / (1 ether);
     }
 
     // Fetch the price from Uniswap v2 using the official libraries
     function _getOracleQuote(uint256 amount) private view returns (uint256) {
         (uint256 reservesWETH, uint256 reservesToken) =
             UniswapV2Library.getReserves(_uniswapFactory, address(_weth), address(_token));
-        return UniswapV2Library.quote(amount.mul(10 ** 18), reservesToken, reservesWETH);
+        return UniswapV2Library.quote(amount * (10 ** 18), reservesToken, reservesWETH);
     }
 }
