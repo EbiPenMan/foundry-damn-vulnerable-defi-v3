@@ -55,7 +55,7 @@ contract FreeRiderChallengeTest is Test {
         // Approve tokens, and then create Uniswap v2 pair against WETH and add liquidity
         token.approve(address(uniswapRouter), UNISWAP_INITIAL_TOKEN_RESERVE);
 
-        //TODO
+        // TODO check
 
         // uniswapRouter.addLiquidityETH{value: UNISWAP_INITIAL_WETH_RESERVE}(
         //     address(token),                                          // token to be traded against WETH
@@ -115,15 +115,15 @@ contract FreeRiderChallengeTest is Test {
 
         // SUCCESS CONDITIONS
 
-        // for (uint256 tokenId = 0; tokenId < AMOUNT_OF_NFTS; tokenId++) {
-        //     nft.transferFrom(address(devsContract), devs, tokenId);
-        //     assertEq(nft.ownerOf(tokenId), devs);
-        // }
+        for (uint256 tokenId = 0; tokenId < AMOUNT_OF_NFTS; tokenId++) {
+            nft.transferFrom(address(devsContract), devs, tokenId);
+            assertEq(nft.ownerOf(tokenId), devs);
+        }
 
-        // assertEq(marketplace.offersCount(), 0);
-        // assertLt(address(marketplace).balance, MARKETPLACE_INITIAL_ETH_BALANCE);
-        // assertGt(player.balance, BOUNTY);
-        // assertEq(address(devsContract).balance, 0);
+        assertEq(marketplace.offersCount(), 0);
+        assertLt(address(marketplace).balance, MARKETPLACE_INITIAL_ETH_BALANCE);
+        assertGt(player.balance, BOUNTY);
+        assertEq(address(devsContract).balance, 0);
     }
 
         function deployBytecodeWithArgs(string memory fileName, bytes memory constructorArgs)

@@ -70,15 +70,15 @@ contract Compromised is Test {
         // SUCCESS CONDITIONS
 
         // Exchange must have lost all ETH
-        // assertEq(exchange.balance, 0);
+        assertEq(address(exchange).balance, 0);
 
         // Player's ETH balance must have significantly increased
-        // assertGt(player.balance, EXCHANGE_INITIAL_ETH_BALANCE);
+        assertGt(player.balance, EXCHANGE_INITIAL_ETH_BALANCE);
 
         // Player must not own any NFT
-        // assertEq(nftToken.balanceOf(player), 0);
+        assertEq(nftToken.balanceOf(player), 0);
 
         // NFT price shouldn't have changed
-        // assertEq(oracle.getMedianPrice("DVNFT"), INITIAL_NFT_PRICE);
+        assertEq(oracle.getMedianPrice("DVNFT"), INITIAL_NFT_PRICE);
     }
 }

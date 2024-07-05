@@ -80,12 +80,13 @@ contract PuppetChallengeTest is Test {
 
         // SUCCESS CONDITIONS
 
-        // // Player executed a single transaction
+        // Player executed a single transaction
+        // TODO check
         // assertEq(vm.getTransactionCount(player), 1);
 
-        // // Player has taken all tokens from the pool
-        // assertEq(token.balanceOf(address(lendingPool)), 0);
-        // assertGt(token.balanceOf(player), POOL_INITIAL_TOKEN_BALANCE);
+        // Player has taken all tokens from the pool
+        assertEq(token.balanceOf(address(lendingPool)), 0);
+        assertGt(token.balanceOf(player), POOL_INITIAL_TOKEN_BALANCE);
     }
 
     function calculateTokenToEthInputPrice(uint256 tokensSold, uint256 tokensInReserve, uint256 etherInReserve)

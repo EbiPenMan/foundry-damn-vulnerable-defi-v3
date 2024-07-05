@@ -52,8 +52,8 @@ contract AbiSmugglingTest is Test {
 
         // SUCCESS CONDITIONS
 
-        // assertEq(token.balanceOf(address(vault)), 0);
-        // assertEq(token.balanceOf(player), 0);
-        // assertEq(token.balanceOf(recovery), VAULT_TOKEN_BALANCE);
+        assertEq(token.balanceOf(address(vault)), 0);
+        assertEq(token.balanceOf(player), 0);
+        assertEq(token.balanceOf(recovery), VAULT_TOKEN_BALANCE);
     }
 }

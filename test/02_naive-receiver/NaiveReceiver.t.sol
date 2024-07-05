@@ -54,7 +54,7 @@ contract NaiveReceiver is Test {
         _execution();
         
         // All ETH has been drained from the receiver
-        // assertEq(address(receiver).balance, 0);
-        // assertEq(address(pool).balance, ETHER_IN_POOL + ETHER_IN_RECEIVER);
+        assertEq(address(receiver).balance, 0);
+        assertEq(address(pool).balance, ETHER_IN_POOL + ETHER_IN_RECEIVER);
     }
 }

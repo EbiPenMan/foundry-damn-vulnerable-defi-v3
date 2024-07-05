@@ -43,6 +43,8 @@ contract PuppetV2ChallengeTest is Test {
         bytes memory v2Router02Args = abi.encode(address(uniswapFactory), address(weth));
         uniswapRouter = IUniswapV2Router02(deployBytecodeWithArgs("UniswapV2Router02.json",v2Router02Args));
 
+
+        // TODO check
         // Create Uniswap pair against WETH and add liquidity
         token.approve(address(uniswapRouter), UNISWAP_INITIAL_TOKEN_RESERVE);
         // uniswapRouter.addLiquidityETH{value: UNISWAP_INITIAL_WETH_RESERVE}(
@@ -80,8 +82,8 @@ contract PuppetV2ChallengeTest is Test {
         // SUCCESS CONDITIONS
 
         // Player has taken all tokens from the pool
-        // assertEq(token.balanceOf(address(lendingPool)), 0);
-        // assertGt(token.balanceOf(player), POOL_INITIAL_TOKEN_BALANCE);
+        assertEq(token.balanceOf(address(lendingPool)), 0);
+        assertGt(token.balanceOf(player), POOL_INITIAL_TOKEN_BALANCE);
     }
 
     function deployBytecode(string memory fileName) public returns (address contractAddress) {

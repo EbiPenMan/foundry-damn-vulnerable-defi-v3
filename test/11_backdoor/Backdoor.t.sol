@@ -66,20 +66,20 @@ contract BackdoorChallengeTest is Test {
         _execution();
 
         // SUCCESS CONDITIONS
+        // TODO check
+        //assertEq(vm.getTransactionCount(player), 1);
 
-        // assertEq(vm.getTransactionCount(player), 1);
-
-        // for (uint256 i = 0; i < users.length; i++) {
-        //     address wallet = walletRegistry.wallets(users[i]);
+        for (uint256 i = 0; i < users.length; i++) {
+            address wallet = walletRegistry.wallets(users[i]);
             
-        //     // User must have registered a wallet
-        //     assertTrue(wallet != address(0), "User did not register a wallet");
+            // User must have registered a wallet
+            assertTrue(wallet != address(0), "User did not register a wallet");
 
-        //     // User is no longer registered as a beneficiary
-        //     assertFalse(walletRegistry.beneficiaries(users[i]));
-        // }
+            // User is no longer registered as a beneficiary
+            assertFalse(walletRegistry.beneficiaries(users[i]));
+        }
 
-        // // Player must own all tokens
-        // assertEq(token.balanceOf(player), AMOUNT_TOKENS_DISTRIBUTED);
+        // Player must own all tokens
+        assertEq(token.balanceOf(player), AMOUNT_TOKENS_DISTRIBUTED);
     }
 }

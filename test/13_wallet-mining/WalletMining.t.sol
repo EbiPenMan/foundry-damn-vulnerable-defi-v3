@@ -57,7 +57,7 @@ contract WalletMiningTest is Test {
 
         walletDeployer.can(ward, DEPOSIT_ADDRESS);
 
-        //TODO
+        // TODO check
         // vm.expectRevert();
         // walletDeployer.can(player, DEPOSIT_ADDRESS);
 
@@ -90,20 +90,17 @@ contract WalletMiningTest is Test {
 
         // SUCCESS CONDITIONS
 
-        // assertGt(vm.getCode(walletDeployer.fact()).length, 0);
+        assertTrue(isContract(address(walletDeployer.fact())));
+        assertTrue(isContract(address(walletDeployer.copy())));
+        assertTrue(isContract(address(DEPOSIT_ADDRESS)));
 
-        // // Master copy account must have code
-        // assertGt(vm.getCode(walletDeployer.copy()).length, 0);
 
-        // // Deposit account must have code
-        // assertGt(vm.getCode(DEPOSIT_ADDRESS).length, 0);
+        // The deposit address and the Safe Deployer contract must not hold tokens
+        assertEq(token.balanceOf(DEPOSIT_ADDRESS), 0);
+        assertEq(token.balanceOf(address(walletDeployer)), 0);
 
-        // // The deposit address and the Safe Deployer contract must not hold tokens
-        // assertEq(token.balanceOf(DEPOSIT_ADDRESS), 0);
-        // assertEq(token.balanceOf(address(walletDeployer)), 0);
-
-        // // Player must own all tokens
-        // assertEq(token.balanceOf(player), initialWalletDeployerTokenBalance + DEPOSIT_TOKEN_AMOUNT);
+        // Player must own all tokens
+        assertEq(token.balanceOf(player), initialWalletDeployerTokenBalance + DEPOSIT_TOKEN_AMOUNT);
     }
 
     function isContract(address account) public view returns (bool) {

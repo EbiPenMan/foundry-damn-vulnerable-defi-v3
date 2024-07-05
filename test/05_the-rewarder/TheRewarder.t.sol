@@ -92,7 +92,7 @@ contract TheRewarde is Test {
     function testTheRewarder() public {
         _execution();
 
-        /*
+        
         // Only one round must have taken place
         assertEq(rewarderPool.roundNumber(), 3);
 
@@ -117,6 +117,6 @@ contract TheRewarde is Test {
         // Balance of DVT tokens in player and lending pool hasn't changed
         assertEq(liquidityToken.balanceOf(player), 0);
         assertEq(liquidityToken.balanceOf(address(flashLoanPool)), TOKENS_IN_LENDER_POOL);
-        */
+        
     }
 }

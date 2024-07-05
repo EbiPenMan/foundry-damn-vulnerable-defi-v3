@@ -62,7 +62,7 @@ contract Selfie is Test {
         // SUCCESS CONDITIONS
 
         // Player has taken all tokens from the pool
-        // assertEq(token.balanceOf(player), TOKENS_IN_POOL);
-        // assertEq(token.balanceOf(address(pool)), 0);
+        assertEq(token.balanceOf(player), TOKENS_IN_POOL);
+        assertEq(token.balanceOf(address(pool)), 0);
     }
 }

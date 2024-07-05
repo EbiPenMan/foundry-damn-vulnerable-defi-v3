@@ -71,7 +71,7 @@ contract ClimberChallengeTest is Test {
 
         // SUCCESS CONDITIONS
 
-        // assertEq(token.balanceOf(address(vault)), 0);
-        // assertEq(token.balanceOf(player), VAULT_TOKEN_BALANCE);
+        assertEq(token.balanceOf(address(vault)), 0);
+        assertEq(token.balanceOf(player), VAULT_TOKEN_BALANCE);
     }
 }

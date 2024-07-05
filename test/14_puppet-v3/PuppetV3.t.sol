@@ -175,17 +175,17 @@ contract PuppetV3Test is Test {
         // SUCCESS CONDITIONS
 
         // Block timestamp must not have changed too much
-        // assertLt(block.timestamp - initialBlockTimestamp, 115, "Too much time passed");
+        assertLt(block.timestamp - initialBlockTimestamp, 115, "Too much time passed");
 
-        // // Player has taken all tokens out of the pool
-        // assertEq(
-        //     token.balanceOf(address(lendingPool)),
-        //     0
-        // );
-        // assertGe(
-        //     token.balanceOf(player),
-        //     LENDING_POOL_INITIAL_TOKEN_BALANCE
-        // );
+        // Player has taken all tokens out of the pool
+        assertEq(
+            token.balanceOf(address(lendingPool)),
+            0
+        );
+        assertGe(
+            token.balanceOf(player),
+            LENDING_POOL_INITIAL_TOKEN_BALANCE
+        );
     }
 
     function deployBytecodeWithArgs(string memory fileName, bytes memory constructorArgs)

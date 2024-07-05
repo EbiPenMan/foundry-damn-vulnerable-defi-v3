@@ -38,7 +38,7 @@ contract SideEntrance is Test {
         _execution();
 
         // Player took all ETH from the pool
-        // assertEq(address(pool).balance, 0);
-        // assertGt(player.balance, ETHER_IN_POOL);
+        assertEq(address(pool).balance, 0);
+        assertGt(player.balance, ETHER_IN_POOL);
     }
 }
