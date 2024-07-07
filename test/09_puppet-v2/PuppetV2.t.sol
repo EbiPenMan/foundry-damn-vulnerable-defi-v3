@@ -26,8 +26,8 @@ contract PuppetV2ChallengeTest is Test {
     uint256 constant POOL_INITIAL_TOKEN_BALANCE = 1000000 ether;
 
     function setUp() public {
-        deployer = payable(address(this));
-        player = payable(address(0x2));
+        deployer = address(this);
+        player = address(0x2);
 
         vm.deal(deployer, 100000 ether);
         vm.deal(player, PLAYER_INITIAL_ETH_BALANCE);
@@ -38,36 +38,36 @@ contract PuppetV2ChallengeTest is Test {
 
         // Deploy Uniswap Factory and Router
         bytes memory v2FactoryArgs = abi.encode(address(0));
-        uniswapFactory = IUniswapV2Factory(deployBytecodeWithArgs("UniswapV2Factory.json",v2FactoryArgs));
+        uniswapFactory = IUniswapV2Factory(deployCode("build-uniswap/v2/UniswapV2Factory.json",v2FactoryArgs));
 
         bytes memory v2Router02Args = abi.encode(address(uniswapFactory), address(weth));
-        uniswapRouter = IUniswapV2Router02(deployBytecodeWithArgs("UniswapV2Router02.json",v2Router02Args));
+        uniswapRouter = IUniswapV2Router02(deployCode("build-uniswap/v2/UniswapV2Router02.json",v2Router02Args));
 
-
-        // TODO check
         // Create Uniswap pair against WETH and add liquidity
         token.approve(address(uniswapRouter), UNISWAP_INITIAL_TOKEN_RESERVE);
-        // uniswapRouter.addLiquidityETH{value: UNISWAP_INITIAL_WETH_RESERVE}(
-        //     address(token),
-        //     UNISWAP_INITIAL_TOKEN_RESERVE, // amountTokenDesired
-        //     0, // amountTokenMin
-        //     0, // amountETHMin
-        //     deployer, // to
-        //     block.timestamp * 2 // deadline
-        // );
-        // address pairAddress = uniswapFactory.getPair(address(token), address(weth));
-        // uniswapExchange = IUniswapV2Pair(pairAddress);
 
-        // // Deploy the lending pool
-        // lendingPool = new PuppetV2Pool(address(weth), address(token), pairAddress, address(uniswapFactory));
+        uniswapRouter.addLiquidityETH{value: UNISWAP_INITIAL_WETH_RESERVE}(
+            address(token),
+            UNISWAP_INITIAL_TOKEN_RESERVE, // amountTokenDesired
+            0, // amountTokenMin
+            0, // amountETHMin
+            deployer, // to
+            block.timestamp * 10000 // deadline
+        );
+        address pairAddress = uniswapFactory.getPair(address(token), address(weth));
+        uniswapExchange = IUniswapV2Pair(pairAddress);
 
-        // // Setup initial token balances of pool and player accounts
-        // token.transfer(player, PLAYER_INITIAL_TOKEN_BALANCE);
-        // token.transfer(address(lendingPool), POOL_INITIAL_TOKEN_BALANCE);
+        // Deploy the lending pool
+        lendingPool = new PuppetV2Pool(address(weth), address(token), pairAddress, address(uniswapFactory));
 
-        // // Check pool's been correctly setup
-        // assertEq(lendingPool.calculateDepositOfWETHRequired(1 ether), 0.3 ether);
-        // assertEq(lendingPool.calculateDepositOfWETHRequired(POOL_INITIAL_TOKEN_BALANCE), 300000 ether);
+        // Setup initial token balances of pool and player accounts
+        token.transfer(player, PLAYER_INITIAL_TOKEN_BALANCE);
+        token.transfer(address(lendingPool), POOL_INITIAL_TOKEN_BALANCE);
+
+        // Check pool's been correctly setup
+        assertEq(lendingPool.calculateDepositOfWETHRequired(1 ether), 0.3 ether);
+        assertEq(lendingPool.calculateDepositOfWETHRequired(POOL_INITIAL_TOKEN_BALANCE), 300000 ether);
+
     }
 
     function _execution() private {
@@ -86,47 +86,4 @@ contract PuppetV2ChallengeTest is Test {
         assertGt(token.balanceOf(player), POOL_INITIAL_TOKEN_BALANCE);
     }
 
-    function deployBytecode(string memory fileName) public returns (address contractAddress) {
-        // Load the bytecode from JSON file
-        string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/build-uniswap/v2/", fileName);
-        string memory json = vm.readFile(path);
-
-        // Parse bytecode
-        bytes memory bytecode = stdJson.readBytes(json, ".evm.bytecode.object");
-
-        assembly {
-            contractAddress := create(0, add(bytecode, 0x20), mload(bytecode))
-            // if iszero(extcodesize(contractAddress)) {
-            //     returndatacopy(0, 0, returndatasize())
-            //     revert(0, returndatasize())
-            // }
-        }
-        require(contractAddress != address(0), "Deployment failed");
-    }
-
-    function deployBytecodeWithArgs(string memory fileName, bytes memory constructorArgs)
-        public
-        returns (address contractAddress)
-    {
-        // Load the bytecode from JSON file
-        string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/build-uniswap/v2/", fileName);
-        string memory json = vm.readFile(path);
-
-        // Parse bytecode
-        bytes memory bytecode = stdJson.readBytes(json, ".evm.bytecode.object");
-
-        // Combine bytecode and constructorArgs
-        bytes memory bytecodeWithArgs = abi.encodePacked(bytecode, constructorArgs);
-
-        assembly {
-            contractAddress := create(0, add(bytecode, 0x20), mload(bytecodeWithArgs))
-            // if iszero(extcodesize(contractAddress)) {
-            //     returndatacopy(0, 0, returndatasize())
-            //     revert(0, returndatasize())
-            // }
-        }
-        require(contractAddress != address(0), "Deployment failed");
-    }
 }

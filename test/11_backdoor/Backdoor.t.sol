@@ -66,8 +66,7 @@ contract BackdoorChallengeTest is Test {
         _execution();
 
         // SUCCESS CONDITIONS
-        // TODO check
-        //assertEq(vm.getTransactionCount(player), 1);
+        assertEq(vm.getNonce(player), 1);
 
         for (uint256 i = 0; i < users.length; i++) {
             address wallet = walletRegistry.wallets(users[i]);

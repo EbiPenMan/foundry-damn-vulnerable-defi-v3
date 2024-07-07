@@ -57,7 +57,7 @@ contract WalletMiningTest is Test {
 
         walletDeployer.can(ward, DEPOSIT_ADDRESS);
 
-        // TODO check
+        // TODO check expectRevert not work on staticcall assembly inline revert
         // vm.expectRevert();
         // walletDeployer.can(player, DEPOSIT_ADDRESS);
 
