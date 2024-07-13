@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity 0.8.26;
 
-import "forge-std/Test.sol";
-import "forge-std/console.sol";
-import "../../src/04_side-entrance/SideEntranceLenderPool.sol";
+import { Test } from "forge-std/Test.sol";
+import { SideEntranceLenderPool } from "../../src/04_side-entrance/SideEntranceLenderPool.sol";
 
 contract SideEntrance is Test {
-    SideEntranceLenderPool pool;
-    address deployer;
-    address player;
+    SideEntranceLenderPool public pool;
+    address public deployer;
+    address public player;
 
-    uint256 constant ETHER_IN_POOL = 1000 ether;
-    uint256 constant PLAYER_INITIAL_ETH_BALANCE = 1 ether;
+    uint256 public constant ETHER_IN_POOL = 1000 ether;
+    uint256 public constant PLAYER_INITIAL_ETH_BALANCE = 1 ether;
 
     function setUp() public {
         deployer = address(this);
@@ -20,7 +19,7 @@ contract SideEntrance is Test {
         // Deploy pool and fund it
         pool = new SideEntranceLenderPool();
         vm.deal(deployer, ETHER_IN_POOL);
-        pool.deposit{value: ETHER_IN_POOL}();
+        pool.deposit{ value: ETHER_IN_POOL }();
         assertEq(address(pool).balance, ETHER_IN_POOL);
 
         // Player starts with limited ETH in balance
@@ -29,9 +28,12 @@ contract SideEntrance is Test {
     }
 
     function _execution() private {
+        vm.startPrank(player);
+
         /**
          * CODE YOUR SOLUTION HERE
          */
+        vm.stopPrank();
     }
 
     function testSideEntrance() public {

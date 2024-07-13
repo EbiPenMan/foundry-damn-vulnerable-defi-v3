@@ -1,19 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "forge-std/Test.sol";
-import "@gnosis.pm/safe-contracts/contracts/Safe.sol";
-import "@gnosis.pm/safe-contracts/contracts/proxies/SafeProxyFactory.sol";
-import "../../src/DamnValuableToken.sol";
-import "../../src/11_backdoor/WalletRegistry.sol";
-
+import { Test } from "forge-std/Test.sol";
+import { GnosisSafe } from "@gnosis.pm/safe-contracts/contracts/GnosisSafe.sol";
+import { GnosisSafeProxyFactory } from "@gnosis.pm/safe-contracts/contracts/proxies/GnosisSafeProxyFactory.sol";
+import { DamnValuableToken } from "../../src/DamnValuableToken.sol";
+import { WalletRegistry } from "../../src/11_backdoor/WalletRegistry.sol";
 
 contract BackdoorChallengeTest is Test {
     address private deployer;
     address private player;
     address[] private users;
-    Safe private masterCopy;
-    SafeProxyFactory private walletFactory;
+    GnosisSafe private masterCopy;
+    GnosisSafeProxyFactory private walletFactory;
     DamnValuableToken private token;
     WalletRegistry private walletRegistry;
 
@@ -29,17 +28,12 @@ contract BackdoorChallengeTest is Test {
         users = [alice, bob, charlie, david];
 
         // Deploy Gnosis Safe master copy and factory contracts
-        masterCopy = new Safe();
-        walletFactory = new SafeProxyFactory();
+        masterCopy = new GnosisSafe();
+        walletFactory = new GnosisSafeProxyFactory();
         token = new DamnValuableToken();
-        
+
         // Deploy the registry
-        walletRegistry = new WalletRegistry(
-            address(masterCopy),
-            address(walletFactory),
-            address(token),
-            users
-        );
+        walletRegistry = new WalletRegistry(address(masterCopy), address(walletFactory), address(token), users);
         assertEq(walletRegistry.owner(), deployer);
 
         for (uint256 i = 0; i < users.length; i++) {
@@ -70,7 +64,7 @@ contract BackdoorChallengeTest is Test {
 
         for (uint256 i = 0; i < users.length; i++) {
             address wallet = walletRegistry.wallets(users[i]);
-            
+
             // User must have registered a wallet
             assertTrue(wallet != address(0), "User did not register a wallet");
 

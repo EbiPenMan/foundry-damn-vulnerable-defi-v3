@@ -1,24 +1,23 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "forge-std/Test.sol";
-import "forge-std/console.sol";
-import "../../src/DamnValuableToken.sol";
-import "../../src/13_wallet-mining/AuthorizerUpgradeable.sol";
-import "../../src/13_wallet-mining/WalletDeployer.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import { Test } from "forge-std/Test.sol";
+import { DamnValuableToken } from "../../src/DamnValuableToken.sol";
+import { AuthorizerUpgradeable } from "../../src/13_wallet-mining/AuthorizerUpgradeable.sol";
+import { WalletDeployer } from "../../src/13_wallet-mining/WalletDeployer.sol";
+import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 contract WalletMiningTest is Test {
-    address deployer;
-    address ward;
-    address player;
-    DamnValuableToken token;
-    AuthorizerUpgradeable authorizer;
-    WalletDeployer walletDeployer;
-    uint256 initialWalletDeployerTokenBalance;
+    address public deployer;
+    address public ward;
+    address public player;
+    DamnValuableToken public token;
+    AuthorizerUpgradeable public authorizer;
+    WalletDeployer public walletDeployer;
+    uint256 public initialWalletDeployerTokenBalance;
 
-    address constant DEPOSIT_ADDRESS = 0x9B6fb606A9f5789444c17768c6dFCF2f83563801;
-    uint256 constant DEPOSIT_TOKEN_AMOUNT = 20000000 * 10 ** 18;
+    address public constant DEPOSIT_ADDRESS = 0x9B6fb606A9f5789444c17768c6dFCF2f83563801;
+    uint256 public constant DEPOSIT_TOKEN_AMOUNT = 20_000_000 * 10 ** 18;
 
     function setUp() public {
         deployer = address(1);
@@ -47,8 +46,8 @@ contract WalletMiningTest is Test {
         // Deploy Safe Deployer contract
         vm.prank(deployer);
         walletDeployer = new WalletDeployer(address(token));
-        assertEq(walletDeployer.chief(), deployer);
-        assertEq(walletDeployer.gem(), address(token));
+        assertEq(walletDeployer.CHIEF(), deployer);
+        assertEq(walletDeployer.GEM(), address(token));
 
         // Set Authorizer in Safe Deployer
         vm.prank(deployer);
@@ -62,13 +61,13 @@ contract WalletMiningTest is Test {
         // walletDeployer.can(player, DEPOSIT_ADDRESS);
 
         // Fund Safe Deployer with tokens
-        initialWalletDeployerTokenBalance = walletDeployer.pay() * 43;
+        initialWalletDeployerTokenBalance = walletDeployer.PAY() * 43;
         token.transfer(address(walletDeployer), initialWalletDeployerTokenBalance);
 
         // // Ensure these accounts start empty
         assertFalse(isContract(DEPOSIT_ADDRESS));
-        assertFalse(isContract(address(walletDeployer.fact())));
-        assertFalse(isContract(address(walletDeployer.copy())));
+        assertFalse(isContract(address(walletDeployer.FACT())));
+        assertFalse(isContract(address(walletDeployer.COPY())));
 
         // Deposit large amount of DVT tokens to the deposit address
         token.transfer(DEPOSIT_ADDRESS, DEPOSIT_TOKEN_AMOUNT);
@@ -90,10 +89,9 @@ contract WalletMiningTest is Test {
 
         // SUCCESS CONDITIONS
 
-        assertTrue(isContract(address(walletDeployer.fact())));
-        assertTrue(isContract(address(walletDeployer.copy())));
+        assertTrue(isContract(address(walletDeployer.FACT())));
+        assertTrue(isContract(address(walletDeployer.COPY())));
         assertTrue(isContract(address(DEPOSIT_ADDRESS)));
-
 
         // The deposit address and the Safe Deployer contract must not hold tokens
         assertEq(token.balanceOf(DEPOSIT_ADDRESS), 0);

@@ -1,27 +1,25 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "forge-std/Test.sol";
-import "forge-std/Vm.sol";
-import "forge-std/console.sol";
-import "../../src/DamnValuableNFT.sol";
-import "../../src/07_compromised/TrustfulOracle.sol";
-import "../../src/07_compromised/TrustfulOracleInitializer.sol";
-import "../../src/07_compromised/Exchange.sol";
+import { Test } from "forge-std/Test.sol";
+import { DamnValuableNFT } from "../../src/DamnValuableNFT.sol";
+import { TrustfulOracle } from "../../src/07_compromised/TrustfulOracle.sol";
+import { TrustfulOracleInitializer } from "../../src/07_compromised/TrustfulOracleInitializer.sol";
+import { Exchange } from "../../src/07_compromised/Exchange.sol";
 
 contract Compromised is Test {
-    address deployer;
-    address player;
-    address[] sources = [
+    address public deployer;
+    address public player;
+    address[] public sources = [
         address(0xA73209FB1a42495120166736362A1DfA9F95A105),
         address(0xe92401A4d3af5E446d93D11EEc806b1462b39D15),
         address(0x81A5D6E50C214044bE44cA0CB057fe119097850c)
     ];
 
-    uint256 constant EXCHANGE_INITIAL_ETH_BALANCE = 999 ether;
-    uint256 constant INITIAL_NFT_PRICE = 999 ether;
-    uint256 constant PLAYER_INITIAL_ETH_BALANCE = 0.1 ether;
-    uint256 constant TRUSTED_SOURCE_INITIAL_ETH_BALANCE = 2 ether;
+    uint256 public constant EXCHANGE_INITIAL_ETH_BALANCE = 999 ether;
+    uint256 public constant INITIAL_NFT_PRICE = 999 ether;
+    uint256 public constant PLAYER_INITIAL_ETH_BALANCE = 0.1 ether;
+    uint256 public constant TRUSTED_SOURCE_INITIAL_ETH_BALANCE = 2 ether;
 
     TrustfulOracle internal oracle;
     Exchange internal exchange;
@@ -31,7 +29,7 @@ contract Compromised is Test {
         deployer = address(this);
         player = address(0x2);
 
-        vm.deal(deployer, 10000 ether);
+        vm.deal(deployer, 10_000 ether);
         vm.deal(player, PLAYER_INITIAL_ETH_BALANCE);
 
         // Initialize balance of the trusted source addresses
@@ -52,8 +50,8 @@ contract Compromised is Test {
         oracle = TrustfulOracle(address(oracleInitializer.oracle()));
 
         // Deploy the exchange and get an instance to the associated ERC721 token
-        exchange = new Exchange{value: EXCHANGE_INITIAL_ETH_BALANCE}(address(oracle));
-        nftToken = DamnValuableNFT(exchange.token());
+        exchange = new Exchange{ value: EXCHANGE_INITIAL_ETH_BALANCE }(address(oracle));
+        nftToken = DamnValuableNFT(exchange.TOKEN());
         assertEq(nftToken.owner(), address(0)); // ownership renounced
         assertEq(nftToken.rolesOf(address(exchange)), nftToken.MINTER_ROLE());
     }

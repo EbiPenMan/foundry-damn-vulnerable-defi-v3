@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 
 /**
  * @title AuthorizedExecutor
@@ -14,7 +14,7 @@ abstract contract AuthorizedExecutor is ReentrancyGuard {
     bool public initialized;
 
     // action identifier => allowed
-    mapping(bytes32 => bool) public permissions;
+    mapping(bytes32 identifier => bool allowed) public permissions;
 
     error NotAllowed();
     error AlreadyInitialized();

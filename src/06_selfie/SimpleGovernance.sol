@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "../DamnValuableTokenSnapshot.sol";
-import "./ISimpleGovernance.sol";
+import { DamnValuableTokenSnapshot } from "../DamnValuableTokenSnapshot.sol";
+import { ISimpleGovernance } from "./ISimpleGovernance.sol";
 /**
  * @title SimpleGovernance
  * @author Damn Vulnerable DeFi (https://damnvulnerabledefi.xyz)
@@ -12,7 +12,7 @@ contract SimpleGovernance is ISimpleGovernance {
     uint256 private constant ACTION_DELAY_IN_SECONDS = 2 days;
     DamnValuableTokenSnapshot private _governanceToken;
     uint256 private _actionCounter;
-    mapping(uint256 => GovernanceAction) private _actions;
+    mapping(uint256 actionKey => GovernanceAction action) private _actions;
 
     constructor(address governanceToken) {
         _governanceToken = DamnValuableTokenSnapshot(governanceToken);
@@ -60,7 +60,7 @@ contract SimpleGovernance is ISimpleGovernance {
         emit ActionExecuted(actionId, msg.sender);
 
         (bool success, bytes memory returndata) =
-            actionToExecute.target.call{value: actionToExecute.value}(actionToExecute.data);
+            actionToExecute.target.call{ value: actionToExecute.value }(actionToExecute.data);
         if (!success) {
             if (returndata.length > 0) {
                 assembly {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "../../build-uniswap/v2/UniswapV2Library.sol";
+import { UniswapV2Library } from "../../build-uniswap/v2/UniswapV2Library.sol";
 
 interface IERC20 {
     function transfer(address to, uint256 amount) external returns (bool);
@@ -14,18 +14,16 @@ interface IERC20 {
  * @author Damn Vulnerable DeFi (https://damnvulnerabledefi.xyz)
  */
 contract PuppetV2Pool {
-
     address private _uniswapPair;
     address private _uniswapFactory;
     IERC20 private _token;
     IERC20 private _weth;
 
-    mapping(address => uint256) public deposits;
+    mapping(address add => uint256 depositValue) public deposits;
 
     event Borrowed(address indexed borrower, uint256 depositRequired, uint256 borrowAmount, uint256 timestamp);
 
-    constructor(address wethAddress, address tokenAddress, address uniswapPairAddress, address uniswapFactoryAddress)
-    {
+    constructor(address wethAddress, address tokenAddress, address uniswapPairAddress, address uniswapFactoryAddress) {
         _weth = IERC20(wethAddress);
         _token = IERC20(tokenAddress);
         _uniswapPair = uniswapPairAddress;

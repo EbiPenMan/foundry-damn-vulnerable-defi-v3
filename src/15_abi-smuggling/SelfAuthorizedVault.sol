@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "solady/src/utils/SafeTransferLib.sol";
-import "./AuthorizedExecutor.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeTransferLib } from "solady/src/utils/SafeTransferLib.sol";
+import { AuthorizedExecutor } from "./AuthorizedExecutor.sol";
 
 /**
  * @title SelfAuthorizedVault

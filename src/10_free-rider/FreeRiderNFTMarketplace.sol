@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "../DamnValuableNFT.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { DamnValuableNFT } from "../DamnValuableNFT.sol";
 
 /**
  * @title FreeRiderNFTMarketplace
@@ -16,7 +16,7 @@ contract FreeRiderNFTMarketplace is ReentrancyGuard {
     uint256 public offersCount;
 
     // tokenId -> price
-    mapping(uint256 => uint256) private offers;
+    mapping(uint256 tokenId => uint256 price) private offers;
 
     event NFTOffered(address indexed offerer, uint256 tokenId, uint256 price);
     event NFTBought(address indexed buyer, uint256 tokenId, uint256 price);
@@ -115,5 +115,5 @@ contract FreeRiderNFTMarketplace is ReentrancyGuard {
         emit NFTBought(msg.sender, tokenId, priceToPay);
     }
 
-    receive() external payable {}
+    receive() external payable { }
 }

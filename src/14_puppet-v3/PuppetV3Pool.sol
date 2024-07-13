@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import {ERC20} from "solmate/src/tokens/ERC20.sol";
-
-import "../../build-uniswap/v3/IUniswapV3Pool.sol";
-import "../../build-uniswap/v3/TransferHelper.sol";
-import "../../build-uniswap/v3/OracleLibrary.sol";
+import { ERC20 } from "solmate/src/tokens/ERC20.sol";
+import { IUniswapV3Pool } from "../../build-uniswap/v3/IUniswapV3Pool.sol";
+import { TransferHelper } from "../../build-uniswap/v3/TransferHelper.sol";
+import { OracleLibrary } from "../../build-uniswap/v3/OracleLibrary.sol";
 
 /**
  * @title PuppetV3Pool
@@ -16,18 +15,18 @@ contract PuppetV3Pool {
     uint256 public constant DEPOSIT_FACTOR = 3;
     uint32 public constant TWAP_PERIOD = 10 minutes;
 
-    ERC20 public immutable weth;
-    ERC20 public immutable token;
-    IUniswapV3Pool public immutable uniswapV3Pool;
+    ERC20 public immutable WETH;
+    ERC20 public immutable TOKEN;
+    IUniswapV3Pool public immutable UNISWAP_V3_POOL;
 
-    mapping(address => uint256) public deposits;
+    mapping(address add => uint256 deposit) public deposits;
 
     event Borrowed(address indexed borrower, uint256 depositAmount, uint256 borrowAmount);
 
     constructor(ERC20 _weth, ERC20 _token, IUniswapV3Pool _uniswapV3Pool) {
-        weth = _weth;
-        token = _token;
-        uniswapV3Pool = _uniswapV3Pool;
+        WETH = _weth;
+        TOKEN = _token;
+        UNISWAP_V3_POOL = _uniswapV3Pool;
     }
 
     /**
@@ -41,12 +40,12 @@ contract PuppetV3Pool {
         uint256 depositOfWETHRequired = calculateDepositOfWETHRequired(borrowAmount);
 
         // Pull the WETH
-        weth.transferFrom(msg.sender, address(this), depositOfWETHRequired);
+        WETH.transferFrom(msg.sender, address(this), depositOfWETHRequired);
 
         // internal accounting
         deposits[msg.sender] += depositOfWETHRequired;
 
-        TransferHelper.safeTransfer(address(token), msg.sender, borrowAmount);
+        TransferHelper.safeTransfer(address(TOKEN), msg.sender, borrowAmount);
 
         emit Borrowed(msg.sender, depositOfWETHRequired, borrowAmount);
     }
@@ -57,16 +56,16 @@ contract PuppetV3Pool {
     }
 
     function _getOracleQuote(uint128 amount) private view returns (uint256) {
-        (int24 arithmeticMeanTick,) = OracleLibrary.consult(address(uniswapV3Pool), TWAP_PERIOD);
+        (int24 arithmeticMeanTick,) = OracleLibrary.consult(address(UNISWAP_V3_POOL), TWAP_PERIOD);
         return OracleLibrary.getQuoteAtTick(
             arithmeticMeanTick,
             amount, // baseAmount
-            address(token), // baseToken
-            address(weth) // quoteToken
+            address(TOKEN), // baseToken
+            address(WETH) // quoteToken
         );
     }
 
     function _toUint128(uint256 amount) private pure returns (uint128 n) {
-        require(amount == (n = uint128(amount)));
+        require(amount == (n = uint128(amount)), "invalid input");
     }
 }

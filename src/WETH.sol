@@ -1,4 +1,5 @@
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.26;
 
 contract WETH {
     string public name = "Wrapped Ether";
@@ -10,8 +11,8 @@ contract WETH {
     event Deposit(address indexed dst, uint256 wad);
     event Withdrawal(address indexed src, uint256 wad);
 
-    mapping(address => uint256) public balanceOf;
-    mapping(address => mapping(address => uint256)) public allowance;
+    mapping(address addr => uint256 balance) public balanceOf;
+    mapping(address from => mapping(address to => uint256 allowance)) public allowance;
 
     receive() external payable {
         deposit();
@@ -23,7 +24,7 @@ contract WETH {
     }
 
     function withdraw(uint256 wad) public {
-        require(balanceOf[msg.sender] >= wad);
+        require(balanceOf[msg.sender] >= wad, "not enough balance");
         balanceOf[msg.sender] -= wad;
         payable(msg.sender).transfer(wad);
         emit Withdrawal(msg.sender, wad);
@@ -44,10 +45,10 @@ contract WETH {
     }
 
     function transferFrom(address src, address dst, uint256 wad) public returns (bool) {
-        require(balanceOf[src] >= wad);
+        require(balanceOf[src] >= wad, "not enough balance");
 
         if (src != msg.sender && allowance[src][msg.sender] != type(uint256).max) {
-            require(allowance[src][msg.sender] >= wad);
+            require(allowance[src][msg.sender] >= wad, "not enough allowance");
             allowance[src][msg.sender] -= wad;
         }
 

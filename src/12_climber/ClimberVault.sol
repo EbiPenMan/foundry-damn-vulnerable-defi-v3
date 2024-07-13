@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "solady/src/utils/SafeTransferLib.sol";
+import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import { UUPSUpgradeable } from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeTransferLib } from "solady/src/utils/SafeTransferLib.sol";
 
-import "./ClimberTimelock.sol";
-import {WITHDRAWAL_LIMIT, WAITING_PERIOD} from "./ClimberConstants.sol";
-import {CallerNotSweeper, InvalidWithdrawalAmount, InvalidWithdrawalTime} from "./ClimberErrors.sol";
+import { ClimberTimelock } from "./ClimberTimelock.sol";
+import { WITHDRAWAL_LIMIT, WAITING_PERIOD } from "./ClimberConstants.sol";
+import { CallerNotSweeper, InvalidWithdrawalAmount, InvalidWithdrawalTime } from "./ClimberErrors.sol";
 
 /**
  * @title ClimberVault
@@ -81,5 +81,5 @@ contract ClimberVault is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     }
 
     // By marking this internal function with `onlyOwner`, we only allow the owner account to authorize an upgrade
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner { }
 }

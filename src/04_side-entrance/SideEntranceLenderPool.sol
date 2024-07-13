@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "solady/src/utils/SafeTransferLib.sol";
+import { SafeTransferLib } from "solady/src/utils/SafeTransferLib.sol";
 
 interface IFlashLoanEtherReceiver {
     function execute() external payable;
@@ -13,7 +13,7 @@ interface IFlashLoanEtherReceiver {
  * @author Damn Vulnerable DeFi (https://damnvulnerabledefi.xyz)
  */
 contract SideEntranceLenderPool {
-    mapping(address => uint256) private balances;
+    mapping(address addressKey => uint256 balanceValue) private balances;
 
     error RepayFailed();
 
@@ -39,7 +39,7 @@ contract SideEntranceLenderPool {
     function flashLoan(uint256 amount) external {
         uint256 balanceBefore = address(this).balance;
 
-        IFlashLoanEtherReceiver(msg.sender).execute{value: amount}();
+        IFlashLoanEtherReceiver(msg.sender).execute{ value: amount }();
 
         if (address(this).balance < balanceBefore) {
             revert RepayFailed();

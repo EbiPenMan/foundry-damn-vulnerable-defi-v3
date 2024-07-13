@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "forge-std/Test.sol";
-import "../../src/WETH.sol";
-import "../../build-uniswap/v2/IUniswapV2Pair.sol";
-import "../../build-uniswap/v2/IUniswapV2Factory.sol";
-import "../../build-uniswap/v2/IUniswapV2Router02.sol";
-import "../../src/10_free-rider/FreeRiderNFTMarketplace.sol";
-import "../../src/10_free-rider/FreeRiderRecovery.sol";
-import "../../src/DamnValuableToken.sol";
-import "../../src/DamnValuableNFT.sol";
+import { Test } from "forge-std/Test.sol";
+import { WETH } from "../../src/WETH.sol";
+import { IUniswapV2Pair } from "../../build-uniswap/v2/IUniswapV2Pair.sol";
+import { IUniswapV2Factory } from "../../build-uniswap/v2/IUniswapV2Factory.sol";
+import { IUniswapV2Router02 } from "../../build-uniswap/v2/IUniswapV2Router02.sol";
+import { FreeRiderNFTMarketplace } from "../../src/10_free-rider/FreeRiderNFTMarketplace.sol";
+import { FreeRiderRecovery } from "../../src/10_free-rider/FreeRiderRecovery.sol";
+import { DamnValuableToken } from "../../src/DamnValuableToken.sol";
+import { DamnValuableNFT } from "../../src/DamnValuableNFT.sol";
 
 contract FreeRiderChallengeTest is Test {
     address private deployer;
@@ -30,7 +30,7 @@ contract FreeRiderChallengeTest is Test {
     uint256 private constant MARKETPLACE_INITIAL_ETH_BALANCE = 90 ether;
     uint256 private constant PLAYER_INITIAL_ETH_BALANCE = 0.1 ether;
     uint256 private constant BOUNTY = 45 ether;
-    uint256 private constant UNISWAP_INITIAL_TOKEN_RESERVE = 15000 ether;
+    uint256 private constant UNISWAP_INITIAL_TOKEN_RESERVE = 15_000 ether;
     uint256 private constant UNISWAP_INITIAL_WETH_RESERVE = 9000 ether;
 
     function setUp() public {
@@ -42,7 +42,7 @@ contract FreeRiderChallengeTest is Test {
         vm.deal(player, PLAYER_INITIAL_ETH_BALANCE);
         assertEq(player.balance, PLAYER_INITIAL_ETH_BALANCE);
 
-        vm.deal(deployer, 100000 ether);
+        vm.deal(deployer, 100_000 ether);
         vm.deal(devs, BOUNTY);
 
         vm.startPrank(deployer);
@@ -54,7 +54,8 @@ contract FreeRiderChallengeTest is Test {
         token = new DamnValuableToken();
 
         // Deploy Uniswap Factory and Router
-        uniswapFactory = IUniswapV2Factory(deployCode("build-uniswap/v2/UniswapV2Factory.json", abi.encode(address(0))));
+        uniswapFactory =
+            IUniswapV2Factory(deployCode("build-uniswap/v2/UniswapV2Factory.json", abi.encode(address(0))));
         uniswapRouter = IUniswapV2Router02(
             deployCode("build-uniswap/v2/UniswapV2Router02.json", abi.encode(address(uniswapFactory), address(weth)))
         );
@@ -62,7 +63,7 @@ contract FreeRiderChallengeTest is Test {
         // Approve tokens, and then create Uniswap v2 pair against WETH and add liquidity
         token.approve(address(uniswapRouter), UNISWAP_INITIAL_TOKEN_RESERVE);
 
-        uniswapRouter.addLiquidityETH{value: UNISWAP_INITIAL_WETH_RESERVE}(
+        uniswapRouter.addLiquidityETH{ value: UNISWAP_INITIAL_WETH_RESERVE }(
             address(token), // token to be traded against WETH
             UNISWAP_INITIAL_TOKEN_RESERVE, // amountTokenDesired
             0, // amountTokenMin
@@ -85,7 +86,7 @@ contract FreeRiderChallengeTest is Test {
         // Deploy the marketplace and get the associated ERC721 token
         // The marketplace will automatically mint AMOUNT_OF_NFTS to the deployer
 
-        marketplace = new FreeRiderNFTMarketplace{value: MARKETPLACE_INITIAL_ETH_BALANCE}(AMOUNT_OF_NFTS);
+        marketplace = new FreeRiderNFTMarketplace{ value: MARKETPLACE_INITIAL_ETH_BALANCE }(AMOUNT_OF_NFTS);
         // payable(address(marketplace)).transfer(MARKETPLACE_INITIAL_ETH_BALANCE);
 
         // Deploy NFT contract
@@ -113,7 +114,7 @@ contract FreeRiderChallengeTest is Test {
         vm.stopPrank();
 
         vm.prank(devs);
-        devsContract = new FreeRiderRecovery{value: BOUNTY}(player, address(nft));
+        devsContract = new FreeRiderRecovery{ value: BOUNTY }(player, address(nft));
     }
 
     function _execution() private {
@@ -127,14 +128,14 @@ contract FreeRiderChallengeTest is Test {
 
         // SUCCESS CONDITIONS
 
-        // for (uint256 tokenId = 0; tokenId < AMOUNT_OF_NFTS; tokenId++) {
-        //     nft.transferFrom(address(devsContract), devs, tokenId);
-        //     assertEq(nft.ownerOf(tokenId), devs);
-        // }
+        for (uint256 tokenId = 0; tokenId < AMOUNT_OF_NFTS; tokenId++) {
+            nft.transferFrom(address(devsContract), devs, tokenId);
+            assertEq(nft.ownerOf(tokenId), devs);
+        }
 
-        // assertEq(marketplace.offersCount(), 0);
-        // assertLt(address(marketplace).balance, MARKETPLACE_INITIAL_ETH_BALANCE);
-        // assertGt(player.balance, BOUNTY);
-        // assertEq(address(devsContract).balance, 0);
+        assertEq(marketplace.offersCount(), 0);
+        assertLt(address(marketplace).balance, MARKETPLACE_INITIAL_ETH_BALANCE);
+        assertGt(player.balance, BOUNTY);
+        assertEq(address(devsContract).balance, 0);
     }
 }

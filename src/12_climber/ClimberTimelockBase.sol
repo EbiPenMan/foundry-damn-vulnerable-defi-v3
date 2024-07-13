@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 
 /**
  * @title ClimberTimelockBase
@@ -24,7 +24,7 @@ abstract contract ClimberTimelockBase is AccessControl {
     }
 
     // Operations are tracked by their bytes32 identifier
-    mapping(bytes32 => Operation) public operations;
+    mapping(bytes32 identifier => Operation operation) public operations;
 
     uint64 public delay;
 
@@ -49,9 +49,13 @@ abstract contract ClimberTimelockBase is AccessControl {
         uint256[] calldata values,
         bytes[] calldata dataElements,
         bytes32 salt
-    ) public pure returns (bytes32) {
+    )
+        public
+        pure
+        returns (bytes32)
+    {
         return keccak256(abi.encode(targets, values, dataElements, salt));
     }
 
-    receive() external payable {}
+    receive() external payable { }
 }

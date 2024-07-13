@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "./TrustfulOracle.sol";
-import "../DamnValuableNFT.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { TrustfulOracle } from "./TrustfulOracle.sol";
+import { DamnValuableNFT } from "../DamnValuableNFT.sol";
 
 /**
  * @title Exchange
@@ -13,8 +13,8 @@ import "../DamnValuableNFT.sol";
 contract Exchange is ReentrancyGuard {
     using Address for address payable;
 
-    DamnValuableNFT public immutable token;
-    TrustfulOracle public immutable oracle;
+    DamnValuableNFT public immutable TOKEN;
+    TrustfulOracle public immutable ORACLE;
 
     error InvalidPayment();
     error SellerNotOwner(uint256 id);
@@ -25,9 +25,9 @@ contract Exchange is ReentrancyGuard {
     event TokenSold(address indexed seller, uint256 tokenId, uint256 price);
 
     constructor(address _oracle) payable {
-        token = new DamnValuableNFT();
-        token.renounceOwnership();
-        oracle = TrustfulOracle(_oracle);
+        TOKEN = new DamnValuableNFT();
+        TOKEN.renounceOwnership();
+        ORACLE = TrustfulOracle(_oracle);
     }
 
     function buyOne() external payable nonReentrant returns (uint256 id) {
@@ -36,12 +36,12 @@ contract Exchange is ReentrancyGuard {
         }
 
         // Price should be in [wei / NFT]
-        uint256 price = oracle.getMedianPrice(token.symbol());
+        uint256 price = ORACLE.getMedianPrice(TOKEN.symbol());
         if (msg.value < price) {
             revert InvalidPayment();
         }
 
-        id = token.safeMint(msg.sender);
+        id = TOKEN.safeMint(msg.sender);
         unchecked {
             payable(msg.sender).sendValue(msg.value - price);
         }
@@ -50,27 +50,27 @@ contract Exchange is ReentrancyGuard {
     }
 
     function sellOne(uint256 id) external nonReentrant {
-        if (msg.sender != token.ownerOf(id)) {
+        if (msg.sender != TOKEN.ownerOf(id)) {
             revert SellerNotOwner(id);
         }
 
-        if (token.getApproved(id) != address(this)) {
+        if (TOKEN.getApproved(id) != address(this)) {
             revert TransferNotApproved();
         }
 
         // Price should be in [wei / NFT]
-        uint256 price = oracle.getMedianPrice(token.symbol());
+        uint256 price = ORACLE.getMedianPrice(TOKEN.symbol());
         if (address(this).balance < price) {
             revert NotEnoughFunds();
         }
 
-        token.transferFrom(msg.sender, address(this), id);
-        token.burn(id);
+        TOKEN.transferFrom(msg.sender, address(this), id);
+        TOKEN.burn(id);
 
         payable(msg.sender).sendValue(price);
 
         emit TokenSold(msg.sender, id, price);
     }
 
-    receive() external payable {}
+    receive() external payable { }
 }

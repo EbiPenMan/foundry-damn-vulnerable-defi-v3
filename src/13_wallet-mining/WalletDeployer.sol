@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IGnosisSafeProxyFactory {
     function createProxy(address masterCopy, bytes calldata data) external returns (address);
@@ -16,19 +16,19 @@ interface IGnosisSafeProxyFactory {
  */
 contract WalletDeployer {
     // Addresses of the Gnosis Safe Factory and Master Copy v1.1.1
-    IGnosisSafeProxyFactory public constant fact = IGnosisSafeProxyFactory(0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B);
-    address public constant copy = 0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F;
+    IGnosisSafeProxyFactory public constant FACT = IGnosisSafeProxyFactory(0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B);
+    address public constant COPY = 0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F;
 
-    uint256 public constant pay = 1 ether;
-    address public immutable chief = msg.sender;
-    address public immutable gem;
+    uint256 public constant PAY = 1 ether;
+    address public immutable CHIEF = msg.sender;
+    address public immutable GEM;
 
     address public mom;
 
     error Boom();
 
     constructor(address _gem) {
-        gem = _gem;
+        GEM = _gem;
     }
 
     /**
@@ -36,7 +36,7 @@ contract WalletDeployer {
      * Can only be called once. TODO: double check.
      */
     function rule(address _mom) external {
-        if (msg.sender != chief || _mom == address(0) || mom != address(0)) {
+        if (msg.sender != CHIEF || _mom == address(0) || mom != address(0)) {
             revert Boom();
         }
         mom = _mom;
@@ -49,11 +49,11 @@ contract WalletDeployer {
      * @return aim address of the created proxy
      */
     function drop(bytes memory wat) external returns (address aim) {
-        aim = fact.createProxy(copy, wat);
+        aim = FACT.createProxy(COPY, wat);
         if (mom != address(0) && !can(msg.sender, aim)) {
             revert Boom();
         }
-        IERC20(gem).transfer(msg.sender, pay);
+        IERC20(GEM).transfer(msg.sender, PAY);
     }
 
     // TODO(0xth3g450pt1m1z0r) put some comments

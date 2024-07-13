@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "forge-std/Test.sol";
-import "../../src/12_climber/ClimberVault.sol";
-import "../../src/12_climber/ClimberTimelock.sol";
-import "../../src/12_climber/ClimberErrors.sol";
-import "../../src/DamnValuableToken.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import { Test } from "forge-std/Test.sol";
+import { ClimberVault } from "../../src/12_climber/ClimberVault.sol";
+import { ClimberTimelock } from "../../src/12_climber/ClimberTimelock.sol";
+import { CallerNotTimelock } from "../../src/12_climber/ClimberErrors.sol";
+import { DamnValuableToken } from "../../src/DamnValuableToken.sol";
+import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 contract ClimberChallengeTest is Test {
     address private deployer;

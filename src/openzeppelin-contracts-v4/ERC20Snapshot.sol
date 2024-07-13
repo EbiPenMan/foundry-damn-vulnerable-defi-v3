@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.9.0) (token/ERC20/extensions/ERC20Snapshot.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "./ERC20.sol";
-import "@openzeppelin/contracts/utils/Arrays.sol";
-import "./Counters.sol";
+import { ERC20 } from "./ERC20.sol";
+import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
+import { Counters } from "./Counters.sol";
 
 /**
  * @dev This contract extends an ERC20 token with a snapshot mechanism. When a snapshot is created, the balances and
@@ -30,7 +30,8 @@ import "./Counters.sol";
  *
  * ==== Gas Costs
  *
- * Snapshots are efficient. Snapshot creation is _O(1)_. Retrieval of balances or total supply from a snapshot is _O(log
+ * Snapshots are efficient. Snapshot creation is _O(1)_. Retrieval of balances or total supply from a snapshot is
+ * _O(log
  * n)_ in the number of snapshots that have been created, although _n_ for a specific account will generally be much
  * smaller since identical balances in subsequent snapshots are stored as a single entry.
  *
@@ -52,7 +53,7 @@ abstract contract ERC20Snapshot is ERC20 {
         uint256[] values;
     }
 
-    mapping(address => Snapshots) private _accountBalanceSnapshots;
+    mapping(address add => Snapshots snapshot) private _accountBalanceSnapshots;
     Snapshots private _totalSupplySnapshots;
 
     // Snapshot ids increase monotonically, with the first value being 1. An id of 0 is invalid.
@@ -119,11 +120,7 @@ abstract contract ERC20Snapshot is ERC20 {
 
     // Update balance and/or total supply snapshots before the values are modified. This is implemented
     // in the _beforeTokenTransfer hook, which is executed for _mint, _burn, and _transfer operations.
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal virtual override {
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override {
         super._beforeTokenTransfer(from, to, amount);
 
         if (from == address(0)) {
@@ -147,16 +144,21 @@ abstract contract ERC20Snapshot is ERC20 {
 
         // When a valid snapshot is queried, there are three possibilities:
         //  a) The queried value was not modified after the snapshot was taken. Therefore, a snapshot entry was never
-        //  created for this id, and all stored snapshot ids are smaller than the requested one. The value that corresponds
+        //  created for this id, and all stored snapshot ids are smaller than the requested one. The value that
+        // corresponds
         //  to this id is the current one.
         //  b) The queried value was modified after the snapshot was taken. Therefore, there will be an entry with the
         //  requested id, and its value is the one to return.
-        //  c) More snapshots were created after the requested one, and the queried value was later modified. There will be
+        //  c) More snapshots were created after the requested one, and the queried value was later modified. There
+        // will
+        // be
         //  no entry for the requested id: the value that corresponds to it is that of the smallest snapshot id that is
         //  larger than the requested one.
         //
-        // In summary, we need to find an element in an array, returning the index of the smallest value that is larger if
-        // it is not found, unless said value doesn't exist (e.g. when all values are smaller). Arrays.findUpperBound does
+        // In summary, we need to find an element in an array, returning the index of the smallest value that is larger
+        // if
+        // it is not found, unless said value doesn't exist (e.g. when all values are smaller). Arrays.findUpperBound
+        // does
         // exactly this.
 
         uint256 index = snapshots.ids.findUpperBound(snapshotId);

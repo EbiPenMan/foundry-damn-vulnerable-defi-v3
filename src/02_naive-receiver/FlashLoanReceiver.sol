@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "solady/src/utils/SafeTransferLib.sol";
-import "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
-import "./NaiveReceiverLenderPool.sol";
+import { SafeTransferLib } from "solady/src/utils/SafeTransferLib.sol";
+import { IERC3156FlashBorrower } from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
 
 /**
  * @title FlashLoanReceiver
@@ -20,7 +19,13 @@ contract FlashLoanReceiver is IERC3156FlashBorrower {
         pool = _pool;
     }
 
-    function onFlashLoan(address, address token, uint256 amount, uint256 fee, bytes calldata)
+    function onFlashLoan(
+        address,
+        address token,
+        uint256 amount,
+        uint256 fee,
+        bytes calldata
+    )
         external
         returns (bytes32)
     {
@@ -50,8 +55,8 @@ contract FlashLoanReceiver is IERC3156FlashBorrower {
     }
 
     // Internal function where the funds received would be used
-    function _executeActionDuringFlashLoan() internal {}
+    function _executeActionDuringFlashLoan() internal { }
 
     // Allow deposits of ETH
-    receive() external payable {}
+    receive() external payable { }
 }

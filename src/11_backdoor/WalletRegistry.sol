@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "solady/src/auth/Ownable.sol";
-import "solady/src/utils/SafeTransferLib.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@gnosis.pm/safe-contracts/contracts/Safe.sol";
-import "@gnosis.pm/safe-contracts/contracts/proxies/IProxyCreationCallback.sol";
+import { Ownable } from "solady/src/auth/Ownable.sol";
+import { SafeTransferLib } from "solady/src/utils/SafeTransferLib.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { GnosisSafe } from "@gnosis.pm/safe-contracts/contracts/GnosisSafe.sol";
+import { IProxyCreationCallback } from "@gnosis.pm/safe-contracts/contracts/proxies/IProxyCreationCallback.sol";
+import { GnosisSafeProxy } from "@gnosis.pm/safe-contracts/contracts/proxies/GnosisSafeProxy.sol";
 
 /**
  * @title WalletRegistry
  * @notice A registry for Gnosis Safe wallets.
- *            When known beneficiaries deploy and register their wallets, the registry sends some Damn Valuable Tokens to the wallet.
+ *            When known beneficiaries deploy and register their wallets, the registry sends some Damn Valuable Tokens
+ * to the wallet.
  * @dev The registry has embedded verifications to ensure only legitimate Gnosis Safe wallets are stored.
  * @author Damn Vulnerable DeFi (https://damnvulnerabledefi.xyz)
  */
@@ -19,14 +21,14 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
     uint256 private constant EXPECTED_THRESHOLD = 1;
     uint256 private constant PAYMENT_AMOUNT = 10 ether;
 
-    address public immutable masterCopy;
-    address public immutable walletFactory;
-    IERC20 public immutable token;
+    address public immutable MASTER_COPY;
+    address public immutable WALLET_FACTORY;
+    IERC20 public immutable TOKEN;
 
-    mapping(address => bool) public beneficiaries;
+    mapping(address add => bool state) public beneficiaries;
 
     // owner => wallet
-    mapping(address => address) public wallets;
+    mapping(address owner => address wallet) public wallets;
 
     error NotEnoughFunds();
     error CallerNotFactory();
@@ -45,9 +47,9 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
     ) {
         _initializeOwner(msg.sender);
 
-        masterCopy = masterCopyAddress;
-        walletFactory = walletFactoryAddress;
-        token = IERC20(tokenAddress);
+        MASTER_COPY = masterCopyAddress;
+        WALLET_FACTORY = walletFactoryAddress;
+        TOKEN = IERC20(tokenAddress);
 
         for (uint256 i = 0; i < initialBeneficiaries.length;) {
             unchecked {
@@ -62,11 +64,20 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
     }
 
     /**
-     * @notice Function executed when user creates a Gnosis Safe wallet via GnosisSafeProxyFactory::createProxyWithCallback
+     * @notice Function executed when user creates a Gnosis Safe wallet via
+     * GnosisSafeProxyFactory::createProxyWithCallback
      *          setting the registry's address as the callback.
      */
-    function proxyCreated(SafeProxy proxy, address singleton, bytes calldata initializer, uint256) external override {
-        if (token.balanceOf(address(this)) < PAYMENT_AMOUNT) {
+    function proxyCreated(
+        GnosisSafeProxy proxy,
+        address singleton,
+        bytes calldata initializer,
+        uint256
+    )
+        external
+        override
+    {
+        if (TOKEN.balanceOf(address(this)) < PAYMENT_AMOUNT) {
             // fail early
             revert NotEnoughFunds();
         }
@@ -74,26 +85,26 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
         address payable walletAddress = payable(proxy);
 
         // Ensure correct factory and master copy
-        if (msg.sender != walletFactory) {
+        if (msg.sender != WALLET_FACTORY) {
             revert CallerNotFactory();
         }
 
-        if (singleton != masterCopy) {
+        if (singleton != MASTER_COPY) {
             revert FakeMasterCopy();
         }
 
         // Ensure initial calldata was a call to `GnosisSafe::setup`
-        if (bytes4(initializer[:4]) != Safe.setup.selector) {
+        if (bytes4(initializer[:4]) != GnosisSafe.setup.selector) {
             revert InvalidInitialization();
         }
 
         // Ensure wallet initialization is the expected
-        uint256 threshold = Safe(walletAddress).getThreshold();
+        uint256 threshold = GnosisSafe(walletAddress).getThreshold();
         if (threshold != EXPECTED_THRESHOLD) {
             revert InvalidThreshold(threshold);
         }
 
-        address[] memory owners = Safe(walletAddress).getOwners();
+        address[] memory owners = GnosisSafe(walletAddress).getOwners();
         if (owners.length != EXPECTED_OWNERS_COUNT) {
             revert InvalidOwnersCount(owners.length);
         }
@@ -119,12 +130,12 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
         wallets[walletOwner] = walletAddress;
 
         // Pay tokens to the newly created wallet
-        SafeTransferLib.safeTransfer(address(token), walletAddress, PAYMENT_AMOUNT);
+        SafeTransferLib.safeTransfer(address(TOKEN), walletAddress, PAYMENT_AMOUNT);
     }
 
     function _getFallbackManager(address payable wallet) private view returns (address) {
         return abi.decode(
-            Safe(wallet).getStorageAt(uint256(keccak256("fallback_manager.handler.address")), 0x20), (address)
+            GnosisSafe(wallet).getStorageAt(uint256(keccak256("fallback_manager.handler.address")), 0x20), (address)
         );
     }
 }

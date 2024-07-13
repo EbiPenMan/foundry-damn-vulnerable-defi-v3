@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "solmate/src/utils/FixedPointMathLib.sol";
-import "solmate/src/utils/ReentrancyGuard.sol";
-import {SafeTransferLib, ERC4626, ERC20} from "solmate/src/tokens/ERC4626.sol";
-import "solmate/src/auth/Owned.sol";
-import {IERC3156FlashBorrower, IERC3156FlashLender} from "@openzeppelin/contracts/interfaces/IERC3156.sol";
+import { FixedPointMathLib } from "solmate/src/utils/FixedPointMathLib.sol";
+import { ReentrancyGuard } from "solmate/src/utils/ReentrancyGuard.sol";
+import { SafeTransferLib, ERC4626, ERC20 } from "solmate/src/mixins/ERC4626.sol";
+import { Owned } from "solmate/src/auth/Owned.sol";
+import { IERC3156FlashBorrower, IERC3156FlashLender } from "@openzeppelin/contracts/interfaces/IERC3156.sol";
 
 /**
  * @title UnstoppableVault
@@ -18,7 +18,7 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
     uint256 public constant FEE_FACTOR = 0.05 ether;
     uint64 public constant GRACE_PERIOD = 30 days;
 
-    uint64 public immutable end = uint64(block.timestamp) + GRACE_PERIOD;
+    uint64 public immutable END = uint64(block.timestamp) + GRACE_PERIOD;
 
     address public feeRecipient;
 
@@ -29,7 +29,11 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
 
     event FeeRecipientUpdated(address indexed newFeeRecipient);
 
-    constructor(ERC20 _token, address _owner, address _feeRecipient)
+    constructor(
+        ERC20 _token,
+        address _owner,
+        address _feeRecipient
+    )
         ERC4626(_token, "Oh Damn Valuable Token", "oDVT")
         Owned(_owner)
     {
@@ -56,7 +60,7 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
             revert UnsupportedCurrency();
         }
 
-        if (block.timestamp < end && _amount < maxFlashLoan(_token)) {
+        if (block.timestamp < END && _amount < maxFlashLoan(_token)) {
             return 0;
         } else {
             return _amount.mulWadUp(FEE_FACTOR);
@@ -87,7 +91,12 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
     /**
      * @inheritdoc IERC3156FlashLender
      */
-    function flashLoan(IERC3156FlashBorrower receiver, address _token, uint256 amount, bytes calldata data)
+    function flashLoan(
+        IERC3156FlashBorrower receiver,
+        address _token,
+        uint256 amount,
+        bytes calldata data
+    )
         external
         returns (bool)
     {
@@ -114,10 +123,10 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
     /**
      * @inheritdoc ERC4626
      */
-    function beforeWithdraw(uint256 assets, uint256 shares) internal override nonReentrant {}
+    function beforeWithdraw(uint256 assets, uint256 shares) internal override nonReentrant { }
 
     /**
      * @inheritdoc ERC4626
      */
-    function afterDeposit(uint256 assets, uint256 shares) internal override nonReentrant {}
+    function afterDeposit(uint256 assets, uint256 shares) internal override nonReentrant { }
 }

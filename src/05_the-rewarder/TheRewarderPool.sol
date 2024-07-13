@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "solady/src/utils/FixedPointMathLib.sol";
-import "solady/src/utils/SafeTransferLib.sol";
-import {RewardToken} from "./RewardToken.sol";
-import {AccountingToken} from "./AccountingToken.sol";
+import { FixedPointMathLib } from "solady/src/utils/FixedPointMathLib.sol";
+import { SafeTransferLib } from "solady/src/utils/SafeTransferLib.sol";
+import { RewardToken } from "./RewardToken.sol";
+import { AccountingToken } from "./AccountingToken.sol";
 
 /**
  * @title TheRewarderPool
@@ -19,27 +19,27 @@ contract TheRewarderPool {
     uint256 public constant REWARDS = 100 ether;
 
     // Token deposited into the pool by users
-    address public immutable liquidityToken;
+    address public immutable LIQUIDITY_TOKEN;
 
     // Token used for internal accounting and snapshots
     // Pegged 1:1 with the liquidity token
-    AccountingToken public immutable accountingToken;
+    AccountingToken public immutable ACCOUNTING_TOKEN;
 
     // Token in which rewards are issued
-    RewardToken public immutable rewardToken;
+    RewardToken public immutable REWARD_TOKEN;
 
     uint128 public lastSnapshotIdForRewards;
     uint64 public lastRecordedSnapshotTimestamp;
     uint64 public roundNumber; // Track number of rounds
-    mapping(address => uint64) public lastRewardTimestamps;
+    mapping(address key => uint64 timestampValue) public lastRewardTimestamps;
 
     error InvalidDepositAmount();
 
     constructor(address _token) {
         // Assuming all tokens have 18 decimals
-        liquidityToken = _token;
-        accountingToken = new AccountingToken();
-        rewardToken = new RewardToken();
+        LIQUIDITY_TOKEN = _token;
+        ACCOUNTING_TOKEN = new AccountingToken();
+        REWARD_TOKEN = new RewardToken();
 
         _recordSnapshot();
     }
@@ -54,15 +54,15 @@ contract TheRewarderPool {
             revert InvalidDepositAmount();
         }
 
-        accountingToken.mint(msg.sender, amount);
+        ACCOUNTING_TOKEN.mint(msg.sender, amount);
         distributeRewards();
 
-        SafeTransferLib.safeTransferFrom(liquidityToken, msg.sender, address(this), amount);
+        SafeTransferLib.safeTransferFrom(LIQUIDITY_TOKEN, msg.sender, address(this), amount);
     }
 
     function withdraw(uint256 amount) external {
-        accountingToken.burn(msg.sender, amount);
-        SafeTransferLib.safeTransfer(liquidityToken, msg.sender, amount);
+        ACCOUNTING_TOKEN.burn(msg.sender, amount);
+        SafeTransferLib.safeTransfer(LIQUIDITY_TOKEN, msg.sender, amount);
     }
 
     function distributeRewards() public returns (uint256 rewards) {
@@ -70,20 +70,20 @@ contract TheRewarderPool {
             _recordSnapshot();
         }
 
-        uint256 totalDeposits = accountingToken.totalSupplyAt(lastSnapshotIdForRewards);
-        uint256 amountDeposited = accountingToken.balanceOfAt(msg.sender, lastSnapshotIdForRewards);
+        uint256 totalDeposits = ACCOUNTING_TOKEN.totalSupplyAt(lastSnapshotIdForRewards);
+        uint256 amountDeposited = ACCOUNTING_TOKEN.balanceOfAt(msg.sender, lastSnapshotIdForRewards);
 
         if (amountDeposited > 0 && totalDeposits > 0) {
             rewards = amountDeposited.mulDiv(REWARDS, totalDeposits);
             if (rewards > 0 && !_hasRetrievedReward(msg.sender)) {
-                rewardToken.mint(msg.sender, rewards);
+                REWARD_TOKEN.mint(msg.sender, rewards);
                 lastRewardTimestamps[msg.sender] = uint64(block.timestamp);
             }
         }
     }
 
     function _recordSnapshot() private {
-        lastSnapshotIdForRewards = uint128(accountingToken.snapshot());
+        lastSnapshotIdForRewards = uint128(ACCOUNTING_TOKEN.snapshot());
         lastRecordedSnapshotTimestamp = uint64(block.timestamp);
         unchecked {
             ++roundNumber;

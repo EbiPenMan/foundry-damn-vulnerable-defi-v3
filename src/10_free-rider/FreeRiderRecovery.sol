@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import { IERC721Receiver } from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 /**
  * @title FreeRiderRecovery
@@ -14,8 +14,8 @@ contract FreeRiderRecovery is ReentrancyGuard, IERC721Receiver {
     using Address for address payable;
 
     uint256 private constant PRIZE = 45 ether;
-    address private immutable beneficiary;
-    IERC721 private immutable nft;
+    address private immutable BENEFICIARY;
+    IERC721 private immutable NFT;
     uint256 private received;
 
     error NotEnoughFunding();
@@ -28,23 +28,29 @@ contract FreeRiderRecovery is ReentrancyGuard, IERC721Receiver {
         if (msg.value != PRIZE) {
             revert NotEnoughFunding();
         }
-        beneficiary = _beneficiary;
-        nft = IERC721(_nft);
+        BENEFICIARY = _beneficiary;
+        NFT = IERC721(_nft);
         IERC721(_nft).setApprovalForAll(msg.sender, true);
     }
 
     // Read https://eips.ethereum.org/EIPS/eip-721 for more info on this function
-    function onERC721Received(address, address, uint256 _tokenId, bytes memory _data)
+    function onERC721Received(
+        address,
+        address,
+        uint256 _tokenId,
+        bytes memory _data
+    )
         external
         override
         nonReentrant
         returns (bytes4)
     {
-        if (msg.sender != address(nft)) {
+        if (msg.sender != address(NFT)) {
             revert CallerNotNFT();
         }
 
-        if (tx.origin != beneficiary) {
+        // solhint-disable-next-line avoid-tx-origin
+        if (tx.origin != BENEFICIARY) {
             revert OriginNotBeneficiary();
         }
 
@@ -52,7 +58,7 @@ contract FreeRiderRecovery is ReentrancyGuard, IERC721Receiver {
             revert InvalidTokenID(_tokenId);
         }
 
-        if (nft.ownerOf(_tokenId) != address(this)) {
+        if (NFT.ownerOf(_tokenId) != address(this)) {
             revert StillNotOwningToken(_tokenId);
         }
 

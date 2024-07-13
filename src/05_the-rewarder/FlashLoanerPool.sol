@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "../DamnValuableToken.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { DamnValuableToken } from "../DamnValuableToken.sol";
 
 /**
  * @title FlashLoanerPool
@@ -14,18 +14,18 @@ import "../DamnValuableToken.sol";
 contract FlashLoanerPool is ReentrancyGuard {
     using Address for address;
 
-    DamnValuableToken public immutable liquidityToken;
+    DamnValuableToken public immutable LIQUIDITY_TOKEN;
 
     error NotEnoughTokenBalance();
     error CallerIsNotContract();
     error FlashLoanNotPaidBack();
 
     constructor(address liquidityTokenAddress) {
-        liquidityToken = DamnValuableToken(liquidityTokenAddress);
+        LIQUIDITY_TOKEN = DamnValuableToken(liquidityTokenAddress);
     }
 
     function flashLoan(uint256 amount) external nonReentrant {
-        uint256 balanceBefore = liquidityToken.balanceOf(address(this));
+        uint256 balanceBefore = LIQUIDITY_TOKEN.balanceOf(address(this));
 
         if (amount > balanceBefore) {
             revert NotEnoughTokenBalance();
@@ -35,11 +35,11 @@ contract FlashLoanerPool is ReentrancyGuard {
             revert CallerIsNotContract();
         }
 
-        liquidityToken.transfer(msg.sender, amount);
+        LIQUIDITY_TOKEN.transfer(msg.sender, amount);
 
         msg.sender.functionCall(abi.encodeWithSignature("receiveFlashLoan(uint256)", amount));
 
-        if (liquidityToken.balanceOf(address(this)) < balanceBefore) {
+        if (LIQUIDITY_TOKEN.balanceOf(address(this)) < balanceBefore) {
             revert FlashLoanNotPaidBack();
         }
     }

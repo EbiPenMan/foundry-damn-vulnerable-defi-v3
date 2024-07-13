@@ -1,11 +1,11 @@
-forge-std/=lib/forge-std/src/
-@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
-@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/
-solmate/=lib/solmate/
-solady/=lib/solady/
-@gnosis.pm/safe-contracts/contracts/=lib/safe-smart-account/contracts/
-@uniswap/v2-core/contracts/=lib/v2-core/contracts/
-@uniswap/v2-periphery/contracts/=lib/v2-periphery/contracts/
-@uniswap/v3-core/contracts/=lib/v3-core/contracts/
-@uniswap/v3-periphery/contracts/=lib/v3-periphery/contracts/
+forge-std/=node_modules/forge-std/src/
+@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/
+@openzeppelin/contracts-upgradeable/=node_modules/@openzeppelin/contracts-upgradeable/
+solmate/=node_modules/solmate/
+solady/=node_modules/solady/
+@gnosis.pm/safe-contracts/contracts/=node_modules/@gnosis.pm/safe-contracts/contracts/
+@uniswap/v2-core/contracts/=node_modules/@uniswap/v2-core/contracts/
+@uniswap/v2-periphery/contracts/=node_modules/@uniswap/v2-periphery/contracts/
+@uniswap/v3-core/contracts/=node_modules/@uniswap/v3-core/contracts/
+@uniswap/v3-periphery/contracts/=node_modules/@uniswap/v3-periphery/contracts/
 

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/Address.sol";
-import "./ClimberTimelockBase.sol";
-import {ADMIN_ROLE, PROPOSER_ROLE, MAX_TARGETS, MIN_TARGETS, MAX_DELAY} from "./ClimberConstants.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { ClimberTimelockBase } from "./ClimberTimelockBase.sol";
+import { ADMIN_ROLE, PROPOSER_ROLE, MAX_TARGETS, MIN_TARGETS, MAX_DELAY } from "./ClimberConstants.sol";
 import {
     InvalidTargetsCount,
     InvalidDataElementsCount,
@@ -41,7 +41,10 @@ contract ClimberTimelock is ClimberTimelockBase {
         uint256[] calldata values,
         bytes[] calldata dataElements,
         bytes32 salt
-    ) external onlyRole(PROPOSER_ROLE) {
+    )
+        external
+        onlyRole(PROPOSER_ROLE)
+    {
         if (targets.length == MIN_TARGETS || targets.length >= MAX_TARGETS) {
             revert InvalidTargetsCount();
         }
@@ -67,7 +70,12 @@ contract ClimberTimelock is ClimberTimelockBase {
     /**
      * Anyone can execute what's been scheduled via `schedule`
      */
-    function execute(address[] calldata targets, uint256[] calldata values, bytes[] calldata dataElements, bytes32 salt)
+    function execute(
+        address[] calldata targets,
+        uint256[] calldata values,
+        bytes[] calldata dataElements,
+        bytes32 salt
+    )
         external
         payable
     {

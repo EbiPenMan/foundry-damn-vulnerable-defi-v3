@@ -1,27 +1,26 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity 0.8.26;
 
-import "forge-std/Test.sol";
-import "forge-std/console.sol";
-import "../../src/DamnValuableToken.sol";
-import "../../src/03_truster/TrusterLenderPool.sol";
+import { Test } from "forge-std/Test.sol";
+import { DamnValuableToken } from "../../src/DamnValuableToken.sol";
+import { TrusterLenderPool } from "../../src/03_truster/TrusterLenderPool.sol";
 
 contract Truster is Test {
-    DamnValuableToken token;
-    TrusterLenderPool pool;
-    address deployer;
-    address player;
+    DamnValuableToken public token;
+    TrusterLenderPool public pool;
+    address public deployer;
+    address public player;
 
-    uint256 constant TOKENS_IN_POOL = 1000000 * 10 ** 18;
+    uint256 public constant TOKENS_IN_POOL = 1_000_000 * 10 ** 18;
 
     function setUp() public {
-        deployer = address(this);
-        player = address(0x1);
+        deployer = address(0x1);
+        player = address(0x2);
 
         // Deploy token and pool contracts
         token = new DamnValuableToken();
         pool = new TrusterLenderPool(DamnValuableToken(token));
-        assertEq(address(pool.token()), address(token));
+        assertEq(address(pool.TOKEN()), address(token));
 
         // Transfer tokens to the pool
         token.transfer(address(pool), TOKENS_IN_POOL);
@@ -30,9 +29,12 @@ contract Truster is Test {
     }
 
     function _execution() private {
+        vm.startPrank(player);
+
         /**
          * CODE YOUR SOLUTION HERE
          */
+        vm.stopPrank();
     }
 
     function testTruster() public {

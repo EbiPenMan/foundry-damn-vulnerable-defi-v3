@@ -1,23 +1,22 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "forge-std/Test.sol";
-import "forge-std/console.sol";
-import "../../src/DamnValuableTokenSnapshot.sol";
-import "../../src/06_selfie/SimpleGovernance.sol";
-import "../../src/06_selfie/SelfiePool.sol";
+import { Test } from "forge-std/Test.sol";
+import { DamnValuableTokenSnapshot } from "../../src/DamnValuableTokenSnapshot.sol";
+import { SimpleGovernance } from "../../src/06_selfie/SimpleGovernance.sol";
+import { SelfiePool } from "../../src/06_selfie/SelfiePool.sol";
 
 contract Selfie is Test {
-    address deployer;
-    address user;
-    address player;
+    address public deployer;
+    address public user;
+    address public player;
 
     DamnValuableTokenSnapshot internal token;
     SimpleGovernance internal governance;
     SelfiePool internal pool;
 
-    uint256 internal constant TOKEN_INITIAL_SUPPLY = 2000000 * 10 ** 18;
-    uint256 internal constant TOKENS_IN_POOL = 1500000 * 10 ** 18;
+    uint256 internal constant TOKEN_INITIAL_SUPPLY = 2_000_000 * 10 ** 18;
+    uint256 internal constant TOKENS_IN_POOL = 1_500_000 * 10 ** 18;
 
     function setUp() public {
         deployer = address(this);
@@ -36,12 +35,9 @@ contract Selfie is Test {
         assertEq(governance.getActionCounter(), 1);
 
         // Deploy the pool
-        pool = new SelfiePool(
-            address(token),
-            address(governance)
-        );
-        assertEq(address(pool.token()), address(token));
-        assertEq(address(pool.governance()), address(governance));
+        pool = new SelfiePool(address(token), address(governance));
+        assertEq(address(pool.TOKEN()), address(token));
+        assertEq(address(pool.GOVERNANCE()), address(governance));
 
         // Fund the pool
         token.transfer(address(pool), TOKENS_IN_POOL);
@@ -53,7 +49,12 @@ contract Selfie is Test {
     }
 
     function _execution() private {
-        /** CODE YOUR SOLUTION HERE */
+        vm.startPrank(player);
+
+        /**
+         * CODE YOUR SOLUTION HERE
+         */
+        vm.stopPrank();
     }
 
     function testSelfie() public {

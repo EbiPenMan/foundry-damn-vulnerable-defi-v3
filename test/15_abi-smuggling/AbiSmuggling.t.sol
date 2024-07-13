@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import "forge-std/Test.sol";
-import "../../src/DamnValuableToken.sol";
-import "../../src/15_abi-smuggling/SelfAuthorizedVault.sol";
+import { Test } from "forge-std/Test.sol";
+import { DamnValuableToken } from "../../src/DamnValuableToken.sol";
+import { SelfAuthorizedVault } from "../../src/15_abi-smuggling/SelfAuthorizedVault.sol";
 
 contract AbiSmugglingTest is Test {
-    address deployer;
-    address player;
-    address recovery;
-    DamnValuableToken token;
-    SelfAuthorizedVault vault;
+    address public deployer;
+    address public player;
+    address public recovery;
+    DamnValuableToken public token;
+    SelfAuthorizedVault public vault;
 
-    uint256 constant VAULT_TOKEN_BALANCE = 1000000e18;
+    uint256 public constant VAULT_TOKEN_BALANCE = 1_000_000e18;
 
     function setUp() public {
         deployer = address(1);
