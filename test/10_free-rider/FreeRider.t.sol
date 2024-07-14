@@ -118,9 +118,12 @@ contract FreeRiderChallengeTest is Test {
     }
 
     function _execution() private {
+        vm.startPrank(player, player);
+
         /**
          * CODE YOUR SOLUTION HERE
          */
+        vm.stopPrank();
     }
 
     function testFreeRider() public {
@@ -128,10 +131,12 @@ contract FreeRiderChallengeTest is Test {
 
         // SUCCESS CONDITIONS
 
+        vm.startPrank(devs);
         for (uint256 tokenId = 0; tokenId < AMOUNT_OF_NFTS; tokenId++) {
             nft.transferFrom(address(devsContract), devs, tokenId);
             assertEq(nft.ownerOf(tokenId), devs);
         }
+        vm.stopPrank();
 
         assertEq(marketplace.offersCount(), 0);
         assertLt(address(marketplace).balance, MARKETPLACE_INITIAL_ETH_BALANCE);

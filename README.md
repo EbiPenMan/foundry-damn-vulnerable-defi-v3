@@ -26,6 +26,9 @@ This repository is a Foundry-based implementation of the original
 [Damn Vulnerable DeFi](https://github.com/tinchoabbate/damn-vulnerable-defi/tree/v3.0.0) project. The challenges feature
 flash loans, price oracles, governance, NFTs, lending pools, smart contract wallets, timelocks, and more!
 
+> This project is currently under development. Users should refer to the [TODO list](#todo-list) as any code not marked
+> as complete has not been tested yet.
+
 ## Play
 
 Visit [damnvulnerabledefi.xyz](https://damnvulnerabledefi.xyz) to access the challenges.
@@ -111,8 +114,8 @@ forge test
 - [x] 6: Selfie
 - [x] 7: Compromised
 - [x] 8: Puppet V1
-- [ ] 9: Puppet V2
-- [ ] 10: Free Rider
+- [x] 9: Puppet V2
+- [x] 10: Free Rider
 - [ ] 11: Backdoor
 - [ ] 12: Climber
 - [ ] 13: Wallet Mining

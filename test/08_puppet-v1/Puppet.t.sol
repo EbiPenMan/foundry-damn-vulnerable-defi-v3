@@ -79,6 +79,7 @@ contract PuppetChallengeTest is Test {
         // SUCCESS CONDITIONS
 
         // Player executed a single transaction
+        // TODO implement this hardhat test in foundry
         // assertEq(vm.getTransactionCount(player), 1);
         // assertEq(vm.getNonce(player), 1);
 
